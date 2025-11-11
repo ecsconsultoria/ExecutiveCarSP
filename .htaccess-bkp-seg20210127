@@ -1,0 +1,117 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php
+
+RewriteCond %{HTTP_REFERER} !^http://executivecarsp.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://executivecarsp.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://executivecarsp.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://executivecarsp.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://executivecarsp.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://executivecarsp.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://executivecarsp1.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://executivecarsp1.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://innovaconstrucoes.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://innovaconstrucoes.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://innovaconstrucoes.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://innovaconstrucoes.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://innovalicitacao.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://innovalicitacao.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://innovalicitacao.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://innovalicitacao.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.executivecarsp.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.executivecarsp.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.executivecarsp.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.executivecarsp.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.executivecarsp.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.executivecarsp.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.executivecarsp1.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.executivecarsp1.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.innovaconstrucoes.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.innovaconstrucoes.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.innovaconstrucoes.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.innovaconstrucoes.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.innovalicitacao.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.innovalicitacao.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.innovalicitacao.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.innovalicitacao.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://executivecarsp.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://executivecarsp.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://executivecarsp.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://executivecarsp.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://executivecarsp.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://executivecarsp.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://executivecarsp1.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://executivecarsp1.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://innovaconstrucoes.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://innovaconstrucoes.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://innovaconstrucoes.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://innovaconstrucoes.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://innovalicitacao.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://innovalicitacao.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://innovalicitacao.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://innovalicitacao.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.executivecarsp.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.executivecarsp.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.executivecarsp.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.executivecarsp.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.executivecarsp.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.executivecarsp.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.executivecarsp1.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.executivecarsp1.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.innovaconstrucoes.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.innovaconstrucoes.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.innovaconstrucoes.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.innovaconstrucoes.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.innovalicitacao.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.innovalicitacao.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.innovalicitacao.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.innovalicitacao.innovareformas.com.br$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.innovareformas.com.br/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.innovareformas.com.br$      [NC]
+RewriteRule .*\.(jpg|jpeg|gif|png|bmp)$ - [F,NC]
+
+
+<Files 403.shtml>
+order allow,deny
+allow from all
+</Files>
+deny from 63.143.42.253
+deny from 177.74.63.55
+deny from 67.212.255.133
+deny from 69.171.251.120
+deny from 114.119.160.133
+deny from 114.119.161.175
+deny from 114.119.165.178
+deny from 114.119.165.180
+deny from 114.119.166.142
+deny from 178.137.135.156
+
+deny from 114.119.163.72
+deny from 165.22.251.121
+deny from 177.13.221.7
+deny from 178.159.37.139
+deny from 183.253.80.105
+deny from 184.94.240.92
+deny from 208.97.177.90
+deny from 35.196.194.28
+deny from 35.229.43.242
+deny from 35.229.70.236
+deny from 51.91.67.153
+deny from 66.249.73.27
+deny from 69.171.251.11
+deny from 77.88.5.106
+deny from 77.88.5.8
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Defina o pacote “ea-php56” como a linguagem padrão de programação “PHP”.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php56 .php .php5 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit
