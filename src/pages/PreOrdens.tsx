@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Search, CheckCircle, XCircle, Eye, Trash2, FileText } from 'lucide-react';
+import { Search, CheckCircle, XCircle, Eye, Trash2, FileText, Upload, Settings, Plus, Edit, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { db } from '../db';
 import { Card } from '../components/ui/Card';
@@ -8,7 +8,17 @@ import { Button } from '../components/ui/Button';
 import { Select, Input } from '../components/forms/Input';
 import { Modal } from '../components/ui/Modal';
 import { useToast } from '../components/ui/Toast';
-import type { PreOrdem } from '../db/models';
+import type { PreOrdem, ImportPreset, ImportMapping, ImportValidation } from '../db/models';
+import {
+  getImportPresets,
+  saveImportPreset,
+  updateImportPreset,
+  deleteImportPreset,
+  createDefaultPreset,
+  parseCSVWithPreset,
+  parseJSONWithPreset,
+  downloadTemplateCSVWithMapping,
+} from '../utils/importerAdvanced';
 
 export function PreOrdens() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -19,11 +29,71 @@ export function PreOrdens() {
     preOrdem: null,
   });
   const [editedPreOrdem, setEditedPreOrdem] = useState<PreOrdem | null>(null);
+  
+  // Import modal states
+  const [importModal, setImportModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedPreset, setSelectedPreset] = useState<number | null>(null);
+  const [importWarnings, setImportWarnings] = useState<string[]>([]);
+  
+  // Preset management modal states
+  const [presetsModal, setPresetsModal] = useState(false);
+  const [presetFormModal, setPresetFormModal] = useState(false);
+  const [editingPreset, setEditingPreset] = useState<ImportPreset | null>(null);
+  const [presetForm, setPresetForm] = useState<{
+    nome: string;
+    descricao: string;
+    mapeamento: ImportMapping;
+    validacoes: ImportValidation[];
+  }>({
+    nome: '',
+    descricao: '',
+    mapeamento: {
+      clienteNome: 'clienteNome',
+      clienteTelefone: 'clienteTelefone',
+      clienteEmail: 'clienteEmail',
+      tipoServico: 'tipoServico',
+      pacoteHoras: 'pacoteHoras',
+      veiculoTipo: 'veiculoTipo',
+      blindado: 'blindado',
+      motoristaTipo: 'motoristaTipo',
+      origem: 'origem',
+      destino: 'destino',
+      dataHoraInicio: 'dataHoraInicio',
+      dataHoraFim: 'dataHoraFim',
+      observacoes: 'observacoes',
+    },
+    validacoes: [],
+  });
 
   const { showToast } = useToast();
 
   const preOrdens = useLiveQuery(() => db.pre_ordens.toArray(), []);
   const settings = useLiveQuery(() => db.settings.get(1));
+  const [presets, setPresets] = useState<ImportPreset[]>([]);
+
+  // Load presets and create default if none exist
+  useEffect(() => {
+    loadPresets();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const loadPresets = async () => {
+    const loadedPresets = await getImportPresets();
+    if (loadedPresets.length === 0) {
+      // Create default preset
+      const defaultId = await createDefaultPreset();
+      const newPresets = await getImportPresets();
+      setPresets(newPresets);
+      setSelectedPreset(defaultId);
+      showToast('info', 'Preset padrão criado automaticamente');
+    } else {
+      setPresets(loadedPresets);
+      if (!selectedPreset) {
+        setSelectedPreset(loadedPresets[0].id!);
+      }
+    }
+  };
 
   const filteredPreOrdens = preOrdens
     ?.filter((po) => statusFilter === 'all' || po.status === statusFilter)
@@ -168,6 +238,166 @@ export function PreOrdens() {
     }
   };
 
+  // Import handlers
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setImportWarnings([]);
+    }
+  };
+
+  const handleImport = async () => {
+    if (!selectedFile) {
+      showToast('error', 'Selecione um arquivo para importar');
+      return;
+    }
+
+    const preset = presets.find(p => p.id === selectedPreset);
+    const fileExt = selectedFile.name.split('.').pop()?.toLowerCase();
+
+    try {
+      let result;
+      if (fileExt === 'csv') {
+        result = await parseCSVWithPreset(selectedFile, preset);
+      } else if (fileExt === 'json') {
+        result = await parseJSONWithPreset(selectedFile, preset);
+      } else {
+        showToast('error', 'Formato de arquivo não suportado. Use CSV ou JSON.');
+        return;
+      }
+
+      if (!result.success) {
+        showToast('error', `Erro ao importar: ${result.errors?.join(', ')}`);
+        if (result.warnings && result.warnings.length > 0) {
+          setImportWarnings(result.warnings);
+        }
+        return;
+      }
+
+      // Save to database
+      if (result.data) {
+        for (const preOrdem of result.data) {
+          await db.pre_ordens.add(preOrdem);
+        }
+        showToast('success', `${result.data.length} pré-ordem(ns) importada(s) com sucesso`);
+        
+        // Show warnings if any
+        if (result.warnings && result.warnings.length > 0) {
+          setImportWarnings(result.warnings);
+        } else {
+          setImportModal(false);
+          setSelectedFile(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error importing:', error);
+      showToast('error', 'Erro ao importar arquivo');
+    }
+  };
+
+  // Preset management handlers
+  const handleOpenPresetForm = (preset?: ImportPreset) => {
+    if (preset) {
+      setEditingPreset(preset);
+      setPresetForm({
+        nome: preset.nome,
+        descricao: preset.descricao || '',
+        mapeamento: preset.mapeamento,
+        validacoes: preset.validacoes,
+      });
+    } else {
+      setEditingPreset(null);
+      setPresetForm({
+        nome: '',
+        descricao: '',
+        mapeamento: {
+          clienteNome: 'clienteNome',
+          clienteTelefone: 'clienteTelefone',
+          clienteEmail: 'clienteEmail',
+          tipoServico: 'tipoServico',
+          pacoteHoras: 'pacoteHoras',
+          veiculoTipo: 'veiculoTipo',
+          blindado: 'blindado',
+          motoristaTipo: 'motoristaTipo',
+          origem: 'origem',
+          destino: 'destino',
+          dataHoraInicio: 'dataHoraInicio',
+          dataHoraFim: 'dataHoraFim',
+          observacoes: 'observacoes',
+        },
+        validacoes: [],
+      });
+    }
+    setPresetFormModal(true);
+  };
+
+  const handleSavePreset = async () => {
+    if (!presetForm.nome.trim()) {
+      showToast('error', 'Nome do preset é obrigatório');
+      return;
+    }
+
+    try {
+      if (editingPreset) {
+        await updateImportPreset(editingPreset.id!, presetForm);
+        showToast('success', 'Preset atualizado com sucesso');
+      } else {
+        await saveImportPreset(presetForm);
+        showToast('success', 'Preset criado com sucesso');
+      }
+      await loadPresets();
+      setPresetFormModal(false);
+    } catch (error) {
+      console.error('Error saving preset:', error);
+      showToast('error', 'Erro ao salvar preset');
+    }
+  };
+
+  const handleDeletePreset = async (id: number) => {
+    if (!confirm('Tem certeza que deseja excluir este preset?')) {
+      return;
+    }
+
+    try {
+      await deleteImportPreset(id);
+      showToast('success', 'Preset excluído com sucesso');
+      await loadPresets();
+      
+      // Reset selected preset if it was deleted
+      if (selectedPreset === id) {
+        const remainingPresets = await getImportPresets();
+        setSelectedPreset(remainingPresets.length > 0 ? remainingPresets[0].id! : null);
+      }
+    } catch (error) {
+      console.error('Error deleting preset:', error);
+      showToast('error', 'Erro ao excluir preset');
+    }
+  };
+
+  const handleAddValidation = () => {
+    setPresetForm({
+      ...presetForm,
+      validacoes: [
+        ...presetForm.validacoes,
+        { campo: '', obrigatorio: false, tipo: 'texto' },
+      ],
+    });
+  };
+
+  const handleUpdateValidation = (index: number, field: keyof ImportValidation, value: string | boolean) => {
+    const newValidations = [...presetForm.validacoes];
+    newValidations[index] = { ...newValidations[index], [field]: value };
+    setPresetForm({ ...presetForm, validacoes: newValidations });
+  };
+
+  const handleRemoveValidation = (index: number) => {
+    setPresetForm({
+      ...presetForm,
+      validacoes: presetForm.validacoes.filter((_, i) => i !== index),
+    });
+  };
+
   const getStatusBadge = (status: PreOrdem['status']) => {
     const config = {
       pendente: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Pendente' },
@@ -187,9 +417,21 @@ export function PreOrdens() {
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-black-900">Pré-Ordens</h1>
-        <p className="text-gray-600 mt-2">Gerenciar ordens importadas e convertê-las em OS</p>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-black-900">Pré-Ordens</h1>
+          <p className="text-gray-600 mt-2">Gerenciar ordens importadas e convertê-las em OS</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={() => setPresetsModal(true)}>
+            <Settings className="h-4 w-4 mr-2" />
+            Gerenciar Presets
+          </Button>
+          <Button onClick={() => setImportModal(true)}>
+            <Upload className="h-4 w-4 mr-2" />
+            Importar Arquivo
+          </Button>
+        </div>
       </div>
 
       <Card>
@@ -562,6 +804,382 @@ export function PreOrdens() {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* Import Modal */}
+      <Modal
+        isOpen={importModal}
+        onClose={() => {
+          setImportModal(false);
+          setSelectedFile(null);
+          setImportWarnings([]);
+        }}
+        title="Importar Arquivo"
+        size="lg"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Selecionar Preset
+            </label>
+            <Select
+              label=""
+              value={selectedPreset?.toString() || ''}
+              onChange={(e) => setSelectedPreset(parseInt(e.target.value))}
+            >
+              {presets.map((preset) => (
+                <option key={preset.id} value={preset.id}>
+                  {preset.nome} {preset.descricao ? `- ${preset.descricao}` : ''}
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Arquivo (CSV ou JSON)
+            </label>
+            <input
+              type="file"
+              accept=".csv,.json"
+              onChange={handleFileSelect}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gold-500 focus:border-gold-500"
+            />
+            {selectedFile && (
+              <p className="text-sm text-gray-600 mt-1">
+                Arquivo selecionado: {selectedFile.name}
+              </p>
+            )}
+          </div>
+
+          {importWarnings.length > 0 && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+              <h4 className="text-sm font-medium text-yellow-800 mb-2">Avisos de Validação:</h4>
+              <ul className="list-disc list-inside space-y-1">
+                {importWarnings.map((warning, idx) => (
+                  <li key={idx} className="text-sm text-yellow-700">{warning}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="flex justify-between items-center pt-4 border-t">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                const preset = presets.find(p => p.id === selectedPreset);
+                downloadTemplateCSVWithMapping(preset?.mapeamento);
+              }}
+            >
+              Baixar Template CSV
+            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setImportModal(false);
+                  setSelectedFile(null);
+                  setImportWarnings([]);
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button onClick={handleImport} disabled={!selectedFile}>
+                Importar
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Presets Management Modal */}
+      <Modal
+        isOpen={presetsModal}
+        onClose={() => setPresetsModal(false)}
+        title="Gerenciar Presets de Importação"
+        size="lg"
+      >
+        <div className="space-y-4">
+          <div className="flex justify-end">
+            <Button onClick={() => handleOpenPresetForm()}>
+              <Plus className="h-4 w-4 mr-2" />
+              Novo Preset
+            </Button>
+          </div>
+
+          <div className="space-y-2">
+            {presets.map((preset) => (
+              <div
+                key={preset.id}
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
+              >
+                <div className="flex-1">
+                  <h3 className="font-medium text-gray-900">{preset.nome}</h3>
+                  {preset.descricao && (
+                    <p className="text-sm text-gray-600 mt-1">{preset.descricao}</p>
+                  )}
+                  <p className="text-xs text-gray-500 mt-1">
+                    {preset.validacoes.length} validações configuradas
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleOpenPresetForm(preset)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => handleDeletePreset(preset.id!)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {presets.length === 0 && (
+              <p className="text-center text-gray-500 py-8">
+                Nenhum preset configurado. Clique em "Novo Preset" para criar um.
+              </p>
+            )}
+          </div>
+        </div>
+      </Modal>
+
+      {/* Preset Form Modal */}
+      <Modal
+        isOpen={presetFormModal}
+        onClose={() => setPresetFormModal(false)}
+        title={editingPreset ? 'Editar Preset' : 'Novo Preset'}
+        size="xl"
+      >
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4">
+            <Input
+              label="Nome do Preset"
+              value={presetForm.nome}
+              onChange={(e) => setPresetForm({ ...presetForm, nome: e.target.value })}
+              placeholder="Ex: Padrão, Google Forms, etc."
+            />
+            <Input
+              label="Descrição (opcional)"
+              value={presetForm.descricao}
+              onChange={(e) => setPresetForm({ ...presetForm, descricao: e.target.value })}
+              placeholder="Descrição do preset"
+            />
+          </div>
+
+          <div>
+            <h3 className="text-lg font-medium text-gray-900 mb-3">Mapeamento de Campos</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Configure os nomes das colunas no arquivo CSV/JSON que correspondem a cada campo
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Nome do Cliente"
+                value={presetForm.mapeamento.clienteNome}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, clienteNome: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Telefone do Cliente"
+                value={presetForm.mapeamento.clienteTelefone || ''}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, clienteTelefone: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Email do Cliente"
+                value={presetForm.mapeamento.clienteEmail || ''}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, clienteEmail: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Tipo de Serviço"
+                value={presetForm.mapeamento.tipoServico}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, tipoServico: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Pacote de Horas"
+                value={presetForm.mapeamento.pacoteHoras || ''}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, pacoteHoras: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Tipo de Veículo"
+                value={presetForm.mapeamento.veiculoTipo}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, veiculoTipo: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Blindado"
+                value={presetForm.mapeamento.blindado || ''}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, blindado: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Tipo de Motorista"
+                value={presetForm.mapeamento.motoristaTipo}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, motoristaTipo: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Origem"
+                value={presetForm.mapeamento.origem}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, origem: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Destino"
+                value={presetForm.mapeamento.destino}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, destino: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Data/Hora Início"
+                value={presetForm.mapeamento.dataHoraInicio}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, dataHoraInicio: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Data/Hora Fim"
+                value={presetForm.mapeamento.dataHoraFim || ''}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, dataHoraFim: e.target.value },
+                  })
+                }
+              />
+              <Input
+                label="Observações"
+                value={presetForm.mapeamento.observacoes || ''}
+                onChange={(e) =>
+                  setPresetForm({
+                    ...presetForm,
+                    mapeamento: { ...presetForm.mapeamento, observacoes: e.target.value },
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-lg font-medium text-gray-900">Regras de Validação</h3>
+              <Button size="sm" onClick={handleAddValidation}>
+                <Plus className="h-4 w-4 mr-2" />
+                Adicionar Validação
+              </Button>
+            </div>
+            <div className="space-y-3">
+              {presetForm.validacoes.map((validation, idx) => (
+                <div key={idx} className="flex gap-2 items-end border border-gray-200 rounded-lg p-3">
+                  <div className="flex-1 grid grid-cols-3 gap-2">
+                    <Input
+                      label="Campo"
+                      value={validation.campo}
+                      onChange={(e) => handleUpdateValidation(idx, 'campo', e.target.value)}
+                      placeholder="Nome do campo"
+                    />
+                    <Select
+                      label="Tipo"
+                      value={validation.tipo}
+                      onChange={(e) => handleUpdateValidation(idx, 'tipo', e.target.value)}
+                      options={[
+                        { value: 'texto', label: 'Texto' },
+                        { value: 'numero', label: 'Número' },
+                        { value: 'data', label: 'Data' },
+                        { value: 'booleano', label: 'Booleano' },
+                      ]}
+                    />
+                    <div className="flex items-center pt-6">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={validation.obrigatorio}
+                          onChange={(e) =>
+                            handleUpdateValidation(idx, 'obrigatorio', e.target.checked)
+                          }
+                          className="rounded border-gray-300 text-gold-500 focus:ring-gold-500"
+                        />
+                        <span className="text-sm font-medium text-gray-700">Obrigatório</span>
+                      </label>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => handleRemoveValidation(idx)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              {presetForm.validacoes.length === 0 && (
+                <p className="text-sm text-gray-500 text-center py-4">
+                  Nenhuma validação configurada. Clique em "Adicionar Validação" para criar regras.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4 border-t">
+            <Button variant="ghost" onClick={() => setPresetFormModal(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSavePreset}>
+              {editingPreset ? 'Atualizar Preset' : 'Criar Preset'}
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );
