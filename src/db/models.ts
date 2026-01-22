@@ -83,7 +83,7 @@ export interface TabelaPreco {
 export interface Ajuste {
   tipo: 'percentual' | 'fixo';
   descricao: string;
-  valor: number; // Percentage or fixed value
+  valor: number; // For percentual: 0-100 (e.g., 10 = 10%); For fixo: absolute value in BRL
 }
 
 export type StatusOS = 'reservado' | 'em_andamento' | 'concluido' | 'cancelado';
