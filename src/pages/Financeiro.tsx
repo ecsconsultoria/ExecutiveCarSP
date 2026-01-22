@@ -18,6 +18,8 @@ import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { Input, Select, TextArea } from '../components/forms/Input';
 import { useToast } from '../components/ui/Toast';
+import { formatCurrency } from '../utils/currency';
+import { formatDate as formatDateUtil } from '../utils/date';
 
 type Tab = 'recebimentos' | 'repasses' | 'dashboard';
 
@@ -44,7 +46,6 @@ export function Financeiro() {
   const ordensServico = useLiveQuery(() => db.ordens_servico.toArray(), []);
   const clientes = useLiveQuery(() => db.clientes.toArray(), []);
   const fornecedores = useLiveQuery(() => db.fornecedores.toArray(), []);
-  const settings = useLiveQuery(() => db.settings.get(1), []);
 
   // Helper functions
   const getClienteNome = (ordemServicoId: number) => {
@@ -115,7 +116,7 @@ export function Financeiro() {
 
   // Dashboard calculations
   const dashboardStats = useMemo(() => {
-    if (!pagamentos || !repasses || !settings) return null;
+    if (!pagamentos || !repasses || !ordensServico) return null;
 
     const totalReceita = pagamentos
       .filter(p => p.status === 'Pago')
@@ -125,7 +126,8 @@ export function Financeiro() {
       .filter(r => r.status === 'Pago')
       .reduce((sum, r) => sum + r.valor, 0);
 
-    const impostos = totalReceita * (settings.imposto / 100);
+    // Calculate impostos from the OrdemServico records
+    const impostos = ordensServico.reduce((sum, os) => sum + (os.impostosAplicados || 0), 0);
     const totalDespesas = totalRepasses + impostos;
     const margem = totalReceita - totalDespesas;
 
@@ -158,12 +160,12 @@ export function Financeiro() {
       vencidosPagamentos,
       pendingRepasses
     };
-  }, [pagamentos, repasses, settings]);
+  }, [pagamentos, repasses, ordensServico]);
 
   // CRUD Handlers - Pagamentos
   const handleAddPagamento = () => {
     setEditingPagamento({
-      ordemServicoId: 0,
+      ordemServicoId: undefined as any,
       valor: 0,
       dataVencimento: new Date(),
       dataPagamento: null,
@@ -206,7 +208,7 @@ export function Financeiro() {
 
   const handleSubmitPagamento = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingPagamento || editingPagamento.ordemServicoId === 0) {
+    if (!editingPagamento || !editingPagamento.ordemServicoId) {
       showToast('error', 'Selecione uma Ordem de Serviço');
       return;
     }
@@ -235,8 +237,8 @@ export function Financeiro() {
   // CRUD Handlers - Repasses
   const handleAddRepasse = () => {
     setEditingRepasse({
-      ordemServicoId: 0,
-      fornecedorId: 0,
+      ordemServicoId: undefined as any,
+      fornecedorId: undefined as any,
       valor: 0,
       dataVencimento: new Date(),
       dataPagamento: null,
@@ -266,7 +268,7 @@ export function Financeiro() {
 
   const handleSubmitRepasse = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingRepasse || editingRepasse.ordemServicoId === 0 || editingRepasse.fornecedorId === 0) {
+    if (!editingRepasse || !editingRepasse.ordemServicoId || !editingRepasse.fornecedorId) {
       showToast('error', 'Selecione uma Ordem de Serviço e um Fornecedor');
       return;
     }
@@ -322,15 +324,10 @@ export function Financeiro() {
     );
   };
 
-  // Format currency
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-  };
-
-  // Format date
+  // Format date helper
   const formatDate = (date: Date | null) => {
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('pt-BR');
+    return formatDateUtil(date);
   };
 
   return (
