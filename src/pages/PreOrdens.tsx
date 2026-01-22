@@ -40,6 +40,10 @@ export function PreOrdens() {
   const [presetsModal, setPresetsModal] = useState(false);
   const [presetFormModal, setPresetFormModal] = useState(false);
   const [editingPreset, setEditingPreset] = useState<ImportPreset | null>(null);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState<{ isOpen: boolean; presetId: number | null }>({
+    isOpen: false,
+    presetId: null,
+  });
   const [presetForm, setPresetForm] = useState<{
     nome: string;
     descricao: string;
@@ -355,9 +359,12 @@ export function PreOrdens() {
   };
 
   const handleDeletePreset = async (id: number) => {
-    if (!confirm('Tem certeza que deseja excluir este preset?')) {
-      return;
-    }
+    setDeleteConfirmModal({ isOpen: true, presetId: id });
+  };
+
+  const confirmDeletePreset = async () => {
+    const id = deleteConfirmModal.presetId;
+    if (!id) return;
 
     try {
       await deleteImportPreset(id);
@@ -369,6 +376,7 @@ export function PreOrdens() {
         const remainingPresets = await getImportPresets();
         setSelectedPreset(remainingPresets.length > 0 ? remainingPresets[0].id! : null);
       }
+      setDeleteConfirmModal({ isOpen: false, presetId: null });
     } catch (error) {
       console.error('Error deleting preset:', error);
       showToast('error', 'Erro ao excluir preset');
@@ -1177,6 +1185,31 @@ export function PreOrdens() {
             </Button>
             <Button onClick={handleSavePreset}>
               {editingPreset ? 'Atualizar Preset' : 'Criar Preset'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={deleteConfirmModal.isOpen}
+        onClose={() => setDeleteConfirmModal({ isOpen: false, presetId: null })}
+        title="Confirmar Exclusão"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-700">
+            Tem certeza que deseja excluir este preset? Esta ação não pode ser desfeita.
+          </p>
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setDeleteConfirmModal({ isOpen: false, presetId: null })}
+            >
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={confirmDeletePreset}>
+              Excluir
             </Button>
           </div>
         </div>
