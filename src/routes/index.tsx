@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, FileText, Users, Truck, DollarSign, Receipt, Settings, Database } from 'lucide-react';
+import { Home, Calendar, FileText, Users, Truck, DollarSign, Receipt, Settings, Database, BarChart3 } from 'lucide-react';
 
 // Pages
 import { Dashboard } from '../pages/Dashboard';
@@ -13,6 +13,7 @@ import { Fornecedores } from '../pages/Fornecedores';
 import { TabelaPrecos } from '../pages/TabelaPrecos';
 import { Financeiro } from '../pages/Financeiro';
 import { Despesas } from '../pages/Despesas';
+import { Relatorios } from '../pages/Relatorios';
 import { Configuracoes } from '../pages/Configuracoes';
 import { Backup } from '../pages/Backup';
 
@@ -25,6 +26,7 @@ const navigation = [
   { name: 'Tabela de Preços', to: '/precos', icon: DollarSign },
   { name: 'Despesas', to: '/despesas', icon: Receipt },
   { name: 'Financeiro', to: '/financeiro', icon: DollarSign },
+  { name: 'Relatórios', to: '/relatorios', icon: BarChart3 },
   { name: 'Configurações', to: '/configuracoes', icon: Settings },
   { name: 'Backup', to: '/backup', icon: Database },
 ];
@@ -101,6 +103,7 @@ export function AppRoutes() {
           <Route path="/precos" element={<TabelaPrecos />} />
           <Route path="/financeiro" element={<Financeiro />} />
           <Route path="/despesas" element={<Despesas />} />
+          <Route path="/relatorios" element={<Relatorios />} />
           <Route path="/configuracoes" element={<Configuracoes />} />
           <Route path="/backup" element={<Backup />} />
         </Routes>
