@@ -46,18 +46,20 @@ export function validateImportData(
             errors.push(`Linha ${index + 1}: campo "${validation.campo}" deve ser um número`);
           }
           break;
-        case 'data':
+        case 'data': {
           const date = new Date(value);
           if (isNaN(date.getTime())) {
             errors.push(`Linha ${index + 1}: campo "${validation.campo}" não é uma data válida`);
           }
           break;
-        case 'booleano':
+        }
+        case 'booleano': {
           const normalized = value.toString().toLowerCase().trim();
           if (!['sim', 'nao', 'não', 'yes', 'no', 'true', 'false', '1', '0'].includes(normalized)) {
             warnings.push(`Linha ${index + 1}: campo "${validation.campo}" tem valor booleano não reconhecido: "${value}"`);
           }
           break;
+        }
       }
 
       // Format validation
@@ -105,7 +107,7 @@ export async function parseCSVWithPreset(file: File, preset?: ImportPreset): Pro
             return;
           }
 
-          const preOrdens = mapDataToPreOrdens(results.data as any[], preset?.mapeamento);
+          const preOrdens = mapDataToPreOrdens(results.data as any[], preset?.mapeamento, 'csv');
           resolve({
             success: true,
             data: preOrdens,
@@ -153,7 +155,7 @@ export async function parseJSONWithPreset(file: File, preset?: ImportPreset): Pr
           return;
         }
 
-        const preOrdens = mapDataToPreOrdens(dataArray, preset?.mapeamento);
+        const preOrdens = mapDataToPreOrdens(dataArray, preset?.mapeamento, 'json');
         
         resolve({
           success: true,
@@ -180,7 +182,7 @@ export async function parseJSONWithPreset(file: File, preset?: ImportPreset): Pr
 }
 
 // Map imported data to PreOrdem format with optional custom mapping
-function mapDataToPreOrdens(data: any[], customMapping?: ImportMapping): PreOrdem[] {
+function mapDataToPreOrdens(data: any[], customMapping?: ImportMapping, importSource: 'csv' | 'json' = 'csv'): PreOrdem[] {
   return data.map((row, index) => {
     // Use custom mapping if provided, otherwise use default field names
     const getField = (standardField: string, customField?: string): any => {
@@ -272,7 +274,7 @@ function mapDataToPreOrdens(data: any[], customMapping?: ImportMapping): PreOrde
       dataHoraInicio,
       dataHoraFim,
       observacoes: observacoesStr ? observacoesStr.toString() : '',
-      importSource: 'csv' as const,
+      importSource,
       status: 'pendente' as const,
       createdAt: new Date(),
     };
