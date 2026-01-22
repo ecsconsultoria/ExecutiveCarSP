@@ -11,7 +11,7 @@ import { Modal } from '../components/ui/Modal';
 import { TextArea, Input, Select } from '../components/forms/Input';
 import { useToast } from '../components/ui/Toast';
 import { formatCurrency } from '../utils/currency';
-import { generateOSConfirmationPDF, generateReceiptPDF } from '../utils/pdf';
+import { generateAdvancedOSConfirmationPDF, generateAdvancedReceiptPDF } from '../utils/pdfAdvanced';
 
 export function OSDetail() {
   const { id } = useParams<{ id: string }>();
@@ -125,14 +125,14 @@ export function OSDetail() {
   };
   
   // PDF Generation functions
-  const handleGenerateConfirmation = () => {
+  const handleGenerateConfirmation = async () => {
     if (!os || !cliente || !settings) {
       showToast('error', 'Dados necessários não carregados');
       return;
     }
     
     try {
-      generateOSConfirmationPDF({ os, cliente, fornecedor, settings });
+      await generateAdvancedOSConfirmationPDF({ os, cliente, fornecedor, settings });
       showToast('success', 'PDF de confirmação gerado com sucesso!');
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
@@ -140,7 +140,7 @@ export function OSDetail() {
     }
   };
   
-  const handleGenerateReceipt = () => {
+  const handleGenerateReceipt = async () => {
     if (!os || !cliente || !settings) {
       showToast('error', 'Dados necessários não carregados');
       return;
@@ -153,7 +153,7 @@ export function OSDetail() {
     }
     
     try {
-      generateReceiptPDF({ os, cliente, pagamento: paidPagamento, settings });
+      await generateAdvancedReceiptPDF({ os, cliente, pagamento: paidPagamento, settings });
       showToast('success', 'Recibo gerado com sucesso!');
     } catch (error) {
       console.error('Erro ao gerar recibo:', error);
