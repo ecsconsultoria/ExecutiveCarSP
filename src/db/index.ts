@@ -10,6 +10,7 @@ import type {
   PagamentoCliente,
   RepasseFornecedor,
   Anexo,
+  PreOrdem,
 } from './models';
 
 export class ExecutiveCarDB extends Dexie {
@@ -23,10 +24,12 @@ export class ExecutiveCarDB extends Dexie {
   pagamentos_cliente!: Table<PagamentoCliente, number>;
   repasses_fornecedor!: Table<RepasseFornecedor, number>;
   anexos!: Table<Anexo, number>;
+  pre_ordens!: Table<PreOrdem, number>;
 
   constructor() {
     super('ExecutiveCarDB');
     
+    // Version 1: Initial schema
     this.version(1).stores({
       settings: '++id',
       clientes: '++id, nome, documento',
@@ -38,6 +41,21 @@ export class ExecutiveCarDB extends Dexie {
       pagamentos_cliente: '++id, ordemServicoId, dataPagamento',
       repasses_fornecedor: '++id, ordemServicoId, fornecedorId, dataRepasse',
       anexos: '++id, ordemServicoId',
+    });
+
+    // Version 2: Phase 2 enhancements
+    this.version(2).stores({
+      settings: '++id',
+      clientes: '++id, nome, documento',
+      fornecedores: '++id, nome, tipo',
+      tabela_precos: '++id, tipoServico, veiculoTipo, motoristaTipo',
+      ordens_servico: '++id, clienteId, fornecedorId, status, createdAt',
+      compromissos: '++id, ordemServicoId, dataHoraInicio',
+      despesas: '++id, ordemServicoId, data, categoria',
+      pagamentos_cliente: '++id, ordemServicoId, status, dataVencimento, dataPagamento',
+      repasses_fornecedor: '++id, ordemServicoId, fornecedorId, status, dataVencimento, dataPagamento',
+      anexos: '++id, ordemServicoId, despesaId',
+      pre_ordens: '++id, status, createdAt',
     });
   }
 }
