@@ -1,0 +1,8 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="180" height="180" rx="40" fill="#000000"/>
+  <path d="M90 40L130 75L90 110L50 75L90 40Z" fill="#D4AF37"/>
+  <path d="M90 75L120 100L90 125L60 100L90 75Z" fill="#D4AF37" opacity="0.7"/>
+  <text x="90" y="155" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#D4AF37" text-anchor="middle">
+    ExecCar
+  </text>
+</svg>
