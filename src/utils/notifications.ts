@@ -65,7 +65,6 @@ export async function showNotification(payload: NotificationPayload): Promise<vo
       tag: payload.tag,
       data: payload.data,
       requireInteraction: false,
-      vibrate: [200, 100, 200],
     });
   } else {
     // Fallback to regular notification

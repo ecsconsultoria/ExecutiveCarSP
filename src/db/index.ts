@@ -82,6 +82,7 @@ export class ExecutiveCarDB extends Dexie {
       saved_filters: '++id, tipo, nome, createdAt',
       pdf_templates: '++id, tipo, nome, createdAt',
     });
+  }
 }
 
 export const db = new ExecutiveCarDB();

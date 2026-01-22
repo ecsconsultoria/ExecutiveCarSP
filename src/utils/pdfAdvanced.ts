@@ -207,8 +207,6 @@ function generatePDFHeader(
   title: string,
   sequentialNumber: number
 ): number {
-  const lang = settings.pdfLanguage || 'pt-BR';
-  
   // Header background
   doc.setFillColor(212, 175, 55); // Gold
   doc.rect(0, 0, 210, 35, 'F');
