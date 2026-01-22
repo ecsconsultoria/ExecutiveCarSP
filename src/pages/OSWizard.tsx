@@ -155,22 +155,22 @@ export function OSWizard() {
   };
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-black-900 mb-8">Nova Ordem de Serviço</h1>
+    <div className="p-4 sm:p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold text-black-900 mb-4 sm:mb-8">Nova Ordem de Serviço</h1>
 
       <Card>
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-4">
+        <div className="mb-4 sm:mb-6">
+          <div className="flex justify-between items-center mb-3 sm:mb-4">
             {[1, 2, 3].map((s) => (
               <div
                 key={s}
-                className={`flex-1 h-2 mx-1 rounded ${
+                className={`flex-1 h-1.5 sm:h-2 mx-1 rounded ${
                   s <= step ? 'bg-gold-500' : 'bg-gray-200'
                 }`}
               />
             ))}
           </div>
-          <div className="flex justify-between text-sm font-medium">
+          <div className="flex justify-between text-xs sm:text-sm font-medium">
             <span className={step === 1 ? 'text-gold-500' : 'text-gray-500'}>Cliente & Serviço</span>
             <span className={step === 2 ? 'text-gold-500' : 'text-gray-500'}>Roteiro & Agenda</span>
             <span className={step === 3 ? 'text-gold-500' : 'text-gray-500'}>Preço & Confirmação</span>

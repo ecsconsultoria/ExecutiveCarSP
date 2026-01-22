@@ -127,20 +127,20 @@ export function Agenda() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-black-900">Agenda</h1>
-        <div className="flex gap-2">
+    <div className="p-4 sm:p-6">
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-black-900">Agenda</h1>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           {settings?.formUrl && (
-            <Button onClick={openFormUrl} variant="secondary">
-              <ExternalLink className="h-5 w-5 mr-2" />
+            <Button onClick={openFormUrl} variant="secondary" className="w-full sm:w-auto">
+              <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
               Abrir Formulário
             </Button>
           )}
           <div className="flex rounded-md shadow-sm">
             <button
               onClick={() => setViewMode('list')}
-              className={`px-4 py-2 text-sm font-medium rounded-l-md border ${
+              className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-l-md border ${
                 viewMode === 'list'
                   ? 'bg-gold-500 text-white border-gold-500'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -150,7 +150,7 @@ export function Agenda() {
             </button>
             <button
               onClick={() => setViewMode('calendar')}
-              className={`px-4 py-2 text-sm font-medium rounded-r-md border-t border-r border-b ${
+              className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-r-md border-t border-r border-b ${
                 viewMode === 'calendar'
                   ? 'bg-gold-500 text-white border-gold-500'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
@@ -176,7 +176,7 @@ export function Agenda() {
 
       {viewMode === 'list' && (
         <Card title="Próximos Compromissos">
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {upcomingCompromissos?.map((compromisso) => {
               const os = getOrdemServico(compromisso.ordemServicoId);
               const cliente = os ? getCliente(os.clienteId) : null;
@@ -187,14 +187,14 @@ export function Agenda() {
               return (
                 <div
                   key={compromisso.id}
-                  className={`border rounded-lg p-4 ${
+                  className={`border rounded-lg p-3 sm:p-4 ${
                     conflictInfo.hasConflict ? 'border-red-300 bg-red-50' : 'border-gray-200'
                   }`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0 w-full">
                       <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
                           {compromisso.titulo}
                         </h3>
                         {os && <StatusBadge status={os.status} />}
@@ -212,7 +212,7 @@ export function Agenda() {
                         )}
                       </div>
                       
-                      <div className="text-sm text-gray-600 space-y-1">
+                      <div className="text-xs sm:text-sm text-gray-600 space-y-1">
                         <div>
                           <span className="font-medium">Cliente:</span>{' '}
                           {cliente?.nome || 'N/A'}
@@ -227,7 +227,7 @@ export function Agenda() {
                         </div>
 
                         {os && (
-                          <div className="mt-3 flex flex-wrap gap-2">
+                          <div className="mt-2 sm:mt-3 flex flex-wrap gap-1 sm:gap-2">
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                               <Car className="h-3 w-3 mr-1" />
                               {getVehicleName(os)}

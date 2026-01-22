@@ -186,22 +186,22 @@ export function PreOrdens() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-black-900">Pré-Ordens</h1>
-        <p className="text-gray-600 mt-2">Gerenciar ordens importadas e convertê-las em OS</p>
+    <div className="p-4 sm:p-6">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-black-900">Pré-Ordens</h1>
+        <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">Gerenciar ordens importadas e convertê-las em OS</p>
       </div>
 
       <Card>
-        <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mb-3 sm:mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
             <input
               type="text"
               placeholder="Buscar por cliente, origem ou destino..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gold-500 focus:border-gold-500"
+              className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-gold-500 focus:border-gold-500"
             />
           </div>
           <Select
