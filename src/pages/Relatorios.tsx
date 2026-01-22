@@ -92,9 +92,10 @@ export function Relatorios() {
       case 'periodo':
         return groupByPeriod(filteredOS, pagamentos, despesas, repasses, periodoType);
       
-      case 'cliente':
+      case 'cliente': {
         const clientesMap = new Map(clientes?.map(c => [c.id!, c.nome]) || []);
         return groupByClient(filteredOS, pagamentos, despesas, repasses, clientesMap);
+      }
       
       case 'veiculo':
         return groupByVehicleType(filteredOS, pagamentos, despesas, repasses);

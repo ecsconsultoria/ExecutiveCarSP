@@ -226,9 +226,10 @@ function getPeriodKey(date: Date, periodType: 'mes' | 'trimestre' | 'ano'): stri
   switch (periodType) {
     case 'mes':
       return `${year}-${month.toString().padStart(2, '0')}`;
-    case 'trimestre':
+    case 'trimestre': {
       const trimestre = Math.ceil(month / 3);
       return `${year}-T${trimestre}`;
+    }
     case 'ano':
       return year.toString();
   }

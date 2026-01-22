@@ -181,16 +181,24 @@ Todos os dados são armazenados **localmente** no navegador usando IndexedDB:
 
 O banco de dados possui as seguintes coleções:
 
-- `settings` - Configurações globais
-- `clientes` - Cadastro de clientes
-- `fornecedores` - Cadastro de fornecedores
-- `tabela_precos` - Tabela de preços
-- `ordens_servico` - Ordens de serviço
-- `compromissos` - Agenda/compromissos
-- `despesas` - Despesas (placeholder)
-- `pagamentos_cliente` - Pagamentos recebidos (placeholder)
-- `repasses_fornecedor` - Repasses a fornecedores (placeholder)
-- `anexos` - Metadados de anexos (placeholder)
+**Configurações e Cadastros:**
+- `settings` - Configurações globais (imposto, veículos, políticas)
+- `clientes` - Cadastro de clientes com contatos
+- `fornecedores` - Cadastro de fornecedores/motoristas
+- `tabela_precos` - Tabela de preços parametrizada
+
+**Operacional:**
+- `ordens_servico` - Ordens de serviço (core do sistema)
+- `compromissos` - Agenda/calendário vinculado a OS
+- `pre_ordens` - Pré-OS do importador de formulários (Phase 2)
+
+**Financeiro (Phase 2):**
+- `pagamentos_cliente` - Pagamentos recebidos de clientes
+- `repasses_fornecedor` - Repasses a fornecedores
+- `despesas` - Despesas operacionais
+
+**Documentos:**
+- `anexos` - Metadados de arquivos (comprovantes, recibos)
 
 ## 🔄 PWA - Progressive Web App
 
@@ -208,12 +216,34 @@ Para instalar no dispositivo:
 
 ## 🚧 Funcionalidades Futuras (Próximas Fases)
 
-- [ ] Geração de PDFs para confirmação de OS
-- [ ] Módulo financeiro completo (pagamentos e repasses)
-- [ ] Importação de dados via Google Sheets
-- [ ] Relatórios e dashboards avançados
-- [ ] Notificações push
+**Phase 2 - ✅ Concluída:**
+- [x] Geração de PDFs para confirmação de OS e recibos
+- [x] Módulo financeiro completo (pagamentos e repasses)
+- [x] Importação de dados via CSV/JSON
+- [x] Relatórios e dashboards avançados
+- [x] Módulo de despesas com upload de comprovantes
+- [x] Agenda aprimorada com detecção de conflitos
+
+**Phase 3 - Planejada:**
+- [ ] Integração com Google Sheets via OAuth
+- [ ] Notificações push para vencimentos
+- [ ] Dashboard com gráficos interativos
+- [ ] Relatórios com visualizações (charts)
 - [ ] Multi-usuário com sincronização
+- [ ] Aplicativo mobile nativo
+- [x] Módulo financeiro completo (pagamentos e repasses)
+- [x] Importação de dados via CSV/JSON
+- [x] Relatórios e dashboards avançados
+- [x] Módulo de despesas com upload de comprovantes
+- [x] Agenda aprimorada com detecção de conflitos
+
+**Phase 3 - Planejada:**
+- [ ] Integração com Google Sheets via OAuth
+- [ ] Notificações push para vencimentos
+- [ ] Dashboard com gráficos interativos
+- [ ] Relatórios com visualizações (charts)
+- [ ] Multi-usuário com sincronização
+- [ ] Aplicativo mobile nativo
 
 ## 🔒 Segurança e Privacidade
 
