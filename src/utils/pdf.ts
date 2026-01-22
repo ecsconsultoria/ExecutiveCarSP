@@ -20,7 +20,7 @@ export interface ReceiptData {
 
 // Generate OS Confirmation PDF
 export function generateOSConfirmationPDF(data: OSConfirmationData): void {
-  const { os, cliente, fornecedor, settings } = data;
+  const { os, cliente, settings } = data;
   const doc = new jsPDF();
 
   // Header
@@ -197,7 +197,7 @@ export function generateOSConfirmationPDF(data: OSConfirmationData): void {
 
 // Generate Receipt PDF
 export function generateReceiptPDF(data: ReceiptData): void {
-  const { os, cliente, pagamento, settings } = data;
+  const { os, cliente, pagamento } = data;
   const doc = new jsPDF();
 
   // Header
