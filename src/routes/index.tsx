@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, FileText, Users, Truck, DollarSign, Receipt, Settings, Database, BarChart3 } from 'lucide-react';
+import { Home, Calendar, FileText, Users, Truck, DollarSign, Receipt, Settings, Database, BarChart3, ClipboardList } from 'lucide-react';
 
 // Pages
 import { Dashboard } from '../pages/Dashboard';
@@ -16,11 +16,13 @@ import { Despesas } from '../pages/Despesas';
 import { Relatorios } from '../pages/Relatorios';
 import { Configuracoes } from '../pages/Configuracoes';
 import { Backup } from '../pages/Backup';
+import { PreOrdens } from '../pages/PreOrdens';
 
 const navigation = [
   { name: 'Dashboard', to: '/', icon: Home },
   { name: 'Agenda', to: '/agenda', icon: Calendar },
   { name: 'Ordens de Serviço', to: '/os', icon: FileText },
+  { name: 'Pré-Ordens', to: '/pre-ordens', icon: ClipboardList },
   { name: 'Clientes', to: '/clientes', icon: Users },
   { name: 'Fornecedores', to: '/fornecedores', icon: Truck },
   { name: 'Tabela de Preços', to: '/precos', icon: DollarSign },
@@ -98,6 +100,7 @@ export function AppRoutes() {
           <Route path="/os" element={<OSList />} />
           <Route path="/os/novo" element={<OSWizard />} />
           <Route path="/os/:id" element={<OSDetail />} />
+          <Route path="/pre-ordens" element={<PreOrdens />} />
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/fornecedores" element={<Fornecedores />} />
           <Route path="/precos" element={<TabelaPrecos />} />
