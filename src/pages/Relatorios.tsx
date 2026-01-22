@@ -275,18 +275,18 @@ export function Relatorios() {
   }, [settings]);
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-black-900">Relatórios</h1>
-          <p className="text-gray-600 mt-1">Análise financeira e operacional</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-black-900">Relatórios</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">Análise financeira e operacional</p>
         </div>
         <Button
           variant="primary"
           onClick={handleExport}
           disabled={!reportData.length}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 w-full sm:w-auto"
         >
           <Download className="h-4 w-4" />
           Exportar CSV
@@ -294,12 +294,12 @@ export function Relatorios() {
       </div>
 
       {/* Filters Section */}
-      <Card className="mb-6">
-        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-          <FileText className="h-5 w-5" />
+      <Card className="mb-4 sm:mb-6">
+        <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2">
+          <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
           Filtros do Relatório
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {/* Date Range */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -331,18 +331,20 @@ export function Financeiro() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-black-900">Financeiro</h1>
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-black-900">Financeiro</h1>
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
+      <div className="mb-4 sm:mb-6 border-b border-gray-200">
+        <nav className="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto" role="tablist">
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+            role="tab"
+            aria-selected={activeTab === 'dashboard'}
+            className={`py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
               activeTab === 'dashboard'
                 ? 'border-gold-500 text-gold-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -352,7 +354,9 @@ export function Financeiro() {
           </button>
           <button
             onClick={() => setActiveTab('recebimentos')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+            role="tab"
+            aria-selected={activeTab === 'recebimentos'}
+            className={`py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
               activeTab === 'recebimentos'
                 ? 'border-gold-500 text-gold-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -362,7 +366,9 @@ export function Financeiro() {
           </button>
           <button
             onClick={() => setActiveTab('repasses')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+            role="tab"
+            aria-selected={activeTab === 'repasses'}
+            className={`py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
               activeTab === 'repasses'
                 ? 'border-gold-500 text-gold-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -375,78 +381,78 @@ export function Financeiro() {
 
       {/* Dashboard Tab */}
       {activeTab === 'dashboard' && dashboardStats && (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
             <Card>
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Receita</p>
-                  <p className="text-2xl font-bold text-green-600">{formatCurrency(dashboardStats.totalReceita)}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Total Receita</p>
+                  <p className="text-lg sm:text-2xl font-bold text-green-600 truncate">{formatCurrency(dashboardStats.totalReceita)}</p>
                 </div>
-                <DollarSign className="h-8 w-8 text-green-600" />
+                <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 flex-shrink-0" />
               </div>
             </Card>
 
             <Card>
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Repasses</p>
-                  <p className="text-2xl font-bold text-orange-600">{formatCurrency(dashboardStats.totalRepasses)}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Total Repasses</p>
+                  <p className="text-lg sm:text-2xl font-bold text-orange-600 truncate">{formatCurrency(dashboardStats.totalRepasses)}</p>
                 </div>
-                <TrendingDown className="h-8 w-8 text-orange-600" />
+                <TrendingDown className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600 flex-shrink-0" />
               </div>
             </Card>
 
             <Card>
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Impostos</p>
-                  <p className="text-2xl font-bold text-red-600">{formatCurrency(dashboardStats.impostos)}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Impostos</p>
+                  <p className="text-lg sm:text-2xl font-bold text-red-600 truncate">{formatCurrency(dashboardStats.impostos)}</p>
                 </div>
-                <Wallet className="h-8 w-8 text-red-600" />
+                <Wallet className="h-6 w-6 sm:h-8 sm:w-8 text-red-600 flex-shrink-0" />
               </div>
             </Card>
 
             <Card>
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Despesas</p>
-                  <p className="text-2xl font-bold text-red-600">{formatCurrency(dashboardStats.totalDespesas)}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Total Despesas</p>
+                  <p className="text-lg sm:text-2xl font-bold text-red-600 truncate">{formatCurrency(dashboardStats.totalDespesas)}</p>
                 </div>
-                <TrendingDown className="h-8 w-8 text-red-600" />
+                <TrendingDown className="h-6 w-6 sm:h-8 sm:w-8 text-red-600 flex-shrink-0" />
               </div>
             </Card>
 
             <Card>
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Margem</p>
-                  <p className={`text-2xl font-bold ${dashboardStats.margem >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Margem</p>
+                  <p className={`text-lg sm:text-2xl font-bold truncate ${dashboardStats.margem >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {formatCurrency(dashboardStats.margem)}
                   </p>
                 </div>
-                <TrendingUp className={`h-8 w-8 ${dashboardStats.margem >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+                <TrendingUp className={`h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0 ${dashboardStats.margem >= 0 ? 'text-green-600' : 'text-red-600'}`} />
               </div>
             </Card>
           </div>
 
           {/* Pending Items */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
             {/* A Receber */}
             <Card title="A Receber">
-              <div className="mb-4">
-                <p className="text-2xl font-bold text-yellow-600">{formatCurrency(dashboardStats.aReceber)}</p>
-                <p className="text-sm text-gray-600">{dashboardStats.pendingPagamentos.length} pagamentos pendentes</p>
+              <div className="mb-3 sm:mb-4">
+                <p className="text-xl sm:text-2xl font-bold text-yellow-600">{formatCurrency(dashboardStats.aReceber)}</p>
+                <p className="text-xs sm:text-sm text-gray-600">{dashboardStats.pendingPagamentos.length} pagamentos pendentes</p>
               </div>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {dashboardStats.pendingPagamentos.map(p => (
-                  <div key={p.id} className="flex justify-between items-center text-sm border-b pb-2">
-                    <div>
+                  <div key={p.id} className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs sm:text-sm border-b pb-2 gap-1 sm:gap-0">
+                    <div className="min-w-0">
                       <p className="font-medium">OS #{p.ordemServicoId}</p>
-                      <p className="text-gray-600">{getClienteNome(p.ordemServicoId)}</p>
+                      <p className="text-gray-600 truncate">{getClienteNome(p.ordemServicoId)}</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <p className="font-medium">{formatCurrency(p.valor)}</p>
                       <p className="text-gray-600">{formatDate(p.dataVencimento)}</p>
                     </div>
@@ -457,18 +463,18 @@ export function Financeiro() {
 
             {/* Vencidos */}
             <Card title="Vencidos">
-              <div className="mb-4">
-                <p className="text-2xl font-bold text-red-600">{formatCurrency(dashboardStats.vencidos)}</p>
-                <p className="text-sm text-gray-600">{dashboardStats.vencidosPagamentos.length} pagamentos vencidos</p>
+              <div className="mb-3 sm:mb-4">
+                <p className="text-xl sm:text-2xl font-bold text-red-600">{formatCurrency(dashboardStats.vencidos)}</p>
+                <p className="text-xs sm:text-sm text-gray-600">{dashboardStats.vencidosPagamentos.length} pagamentos vencidos</p>
               </div>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {dashboardStats.vencidosPagamentos.map(p => (
-                  <div key={p.id} className="flex justify-between items-center text-sm border-b pb-2">
-                    <div>
+                  <div key={p.id} className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs sm:text-sm border-b pb-2 gap-1 sm:gap-0">
+                    <div className="min-w-0">
                       <p className="font-medium">OS #{p.ordemServicoId}</p>
-                      <p className="text-gray-600">{getClienteNome(p.ordemServicoId)}</p>
+                      <p className="text-gray-600 truncate">{getClienteNome(p.ordemServicoId)}</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <p className="font-medium">{formatCurrency(p.valor)}</p>
                       <p className="text-red-600">{formatDate(p.dataVencimento)}</p>
                     </div>
@@ -479,18 +485,18 @@ export function Financeiro() {
 
             {/* A Faturar */}
             <Card title="A Faturar">
-              <div className="mb-4">
-                <p className="text-2xl font-bold text-blue-600">{formatCurrency(dashboardStats.aFaturar)}</p>
-                <p className="text-sm text-gray-600">{dashboardStats.pendingRepasses.length} repasses pendentes</p>
+              <div className="mb-3 sm:mb-4">
+                <p className="text-xl sm:text-2xl font-bold text-blue-600">{formatCurrency(dashboardStats.aFaturar)}</p>
+                <p className="text-xs sm:text-sm text-gray-600">{dashboardStats.pendingRepasses.length} repasses pendentes</p>
               </div>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {dashboardStats.pendingRepasses.map(r => (
-                  <div key={r.id} className="flex justify-between items-center text-sm border-b pb-2">
-                    <div>
+                  <div key={r.id} className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs sm:text-sm border-b pb-2 gap-1 sm:gap-0">
+                    <div className="min-w-0">
                       <p className="font-medium">OS #{r.ordemServicoId}</p>
-                      <p className="text-gray-600">{getFornecedorNome(r.fornecedorId)}</p>
+                      <p className="text-gray-600 truncate">{getFornecedorNome(r.fornecedorId)}</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <p className="font-medium">{formatCurrency(r.valor)}</p>
                       <p className="text-gray-600">{formatDate(r.dataVencimento)}</p>
                     </div>
@@ -504,25 +510,25 @@ export function Financeiro() {
 
       {/* Recebimentos Tab */}
       {activeTab === 'recebimentos' && (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {/* Actions and Filters */}
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
                 <input
                   type="text"
                   placeholder="Buscar por OS ou Cliente..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gold-500 focus:border-gold-500"
+                  className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-gold-500 focus:border-gold-500"
                 />
               </div>
             </div>
             <Select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full md:w-48"
+              className="w-full sm:w-48"
             >
               <option value="all">Todos os Status</option>
               <option value="AReceber">A Receber</option>
@@ -535,18 +541,18 @@ export function Financeiro() {
               value={dateRangeStart}
               onChange={(e) => setDateRangeStart(e.target.value)}
               placeholder="Data inicial"
-              className="w-full md:w-40"
+              className="w-full sm:w-40"
             />
             <Input
               type="date"
               value={dateRangeEnd}
               onChange={(e) => setDateRangeEnd(e.target.value)}
               placeholder="Data final"
-              className="w-full md:w-40"
+              className="w-full sm:w-40"
             />
-            <Button onClick={handleAddPagamento}>
-              <Plus className="h-5 w-5 mr-2" />
-              Novo
+            <Button onClick={handleAddPagamento} className="w-full sm:w-auto">
+              <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              <span className="sm:inline">Novo</span>
             </Button>
           </div>
 
@@ -627,25 +633,25 @@ export function Financeiro() {
 
       {/* Repasses Tab */}
       {activeTab === 'repasses' && (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {/* Actions and Filters */}
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
                 <input
                   type="text"
                   placeholder="Buscar por OS ou Fornecedor..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gold-500 focus:border-gold-500"
+                  className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-gold-500 focus:border-gold-500"
                 />
               </div>
             </div>
             <Select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full md:w-48"
+              className="w-full sm:w-48"
             >
               <option value="all">Todos os Status</option>
               <option value="AFaturar">A Faturar</option>
@@ -655,7 +661,7 @@ export function Financeiro() {
             <Select
               value={fornecedorFilter}
               onChange={(e) => setFornecedorFilter(e.target.value)}
-              className="w-full md:w-48"
+              className="w-full sm:w-48"
             >
               <option value="all">Todos Fornecedores</option>
               {fornecedores?.map(f => (
@@ -667,18 +673,18 @@ export function Financeiro() {
               value={dateRangeStart}
               onChange={(e) => setDateRangeStart(e.target.value)}
               placeholder="Data inicial"
-              className="w-full md:w-40"
+              className="w-full sm:w-40"
             />
             <Input
               type="date"
               value={dateRangeEnd}
               onChange={(e) => setDateRangeEnd(e.target.value)}
               placeholder="Data final"
-              className="w-full md:w-40"
+              className="w-full sm:w-40"
             />
-            <Button onClick={handleAddRepasse}>
-              <Plus className="h-5 w-5 mr-2" />
-              Novo
+            <Button onClick={handleAddRepasse} className="w-full sm:w-auto">
+              <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              <span className="sm:inline">Novo</span>
             </Button>
           </div>
 
@@ -755,77 +761,85 @@ export function Financeiro() {
         title={editingPagamento?.id ? 'Editar Recebimento' : 'Novo Recebimento'}
         size="lg"
       >
-        <form onSubmit={handleSubmitPagamento} className="space-y-4">
-          <Select
-            label="Ordem de Serviço"
-            value={editingPagamento?.ordemServicoId || ''}
-            onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, ordemServicoId: Number(e.target.value) } : null)}
-            required
-          >
-            <option value="">Selecione...</option>
-            {ordensServico?.map(os => (
-              <option key={os.id} value={os.id}>
-                OS #{os.id} - {clientes?.find(c => c.id === os.clienteId)?.nome}
-              </option>
-            ))}
-          </Select>
+        <form onSubmit={handleSubmitPagamento} className="space-y-3 sm:space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <div className="md:col-span-2">
+              <Select
+                label="Ordem de Serviço"
+                value={editingPagamento?.ordemServicoId || ''}
+                onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, ordemServicoId: Number(e.target.value) } : null)}
+                required
+              >
+                <option value="">Selecione...</option>
+                {ordensServico?.map(os => (
+                  <option key={os.id} value={os.id}>
+                    OS #{os.id} - {clientes?.find(c => c.id === os.clienteId)?.nome}
+                  </option>
+                ))}
+              </Select>
+            </div>
 
-          <Input
-            type="number"
-            label="Valor"
-            value={editingPagamento?.valor || ''}
-            onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, valor: Number(e.target.value) } : null)}
-            step="0.01"
-            required
-          />
+            <Input
+              type="number"
+              label="Valor"
+              value={editingPagamento?.valor || ''}
+              onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, valor: Number(e.target.value) } : null)}
+              step="0.01"
+              required
+            />
 
-          <Input
-            type="date"
-            label="Data de Vencimento"
-            value={editingPagamento?.dataVencimento ? new Date(editingPagamento.dataVencimento).toISOString().split('T')[0] : ''}
-            onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, dataVencimento: new Date(e.target.value) } : null)}
-            required
-          />
+            <Select
+              label="Status"
+              value={editingPagamento?.status || 'AReceber'}
+              onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, status: e.target.value as PagamentoCliente['status'] } : null)}
+              required
+            >
+              <option value="AReceber">A Receber</option>
+              <option value="Pago">Pago</option>
+              <option value="Vencido">Vencido</option>
+              <option value="Cancelado">Cancelado</option>
+            </Select>
 
-          <Input
-            type="date"
-            label="Data de Pagamento"
-            value={editingPagamento?.dataPagamento ? new Date(editingPagamento.dataPagamento).toISOString().split('T')[0] : ''}
-            onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, dataPagamento: e.target.value ? new Date(e.target.value) : null } : null)}
-          />
+            <Input
+              type="date"
+              label="Data de Vencimento"
+              value={editingPagamento?.dataVencimento ? new Date(editingPagamento.dataVencimento).toISOString().split('T')[0] : ''}
+              onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, dataVencimento: new Date(e.target.value) } : null)}
+              required
+            />
 
-          <Select
-            label="Status"
-            value={editingPagamento?.status || 'AReceber'}
-            onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, status: e.target.value as PagamentoCliente['status'] } : null)}
-            required
-          >
-            <option value="AReceber">A Receber</option>
-            <option value="Pago">Pago</option>
-            <option value="Vencido">Vencido</option>
-            <option value="Cancelado">Cancelado</option>
-          </Select>
+            <Input
+              type="date"
+              label="Data de Pagamento"
+              value={editingPagamento?.dataPagamento ? new Date(editingPagamento.dataPagamento).toISOString().split('T')[0] : ''}
+              onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, dataPagamento: e.target.value ? new Date(e.target.value) : null } : null)}
+            />
 
-          <Select
-            label="Forma de Pagamento"
-            value={editingPagamento?.formaPagamento || ''}
-            onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, formaPagamento: e.target.value as PagamentoCliente['formaPagamento'] } : null)}
-          >
-            <option value="">Selecione...</option>
-            <option value="PIX">PIX</option>
-            <option value="Cartao">Cartão</option>
-            <option value="Boleto">Boleto</option>
-            <option value="Transferencia">Transferência</option>
-          </Select>
+            <div className="md:col-span-2">
+              <Select
+                label="Forma de Pagamento"
+                value={editingPagamento?.formaPagamento || ''}
+                onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, formaPagamento: e.target.value as PagamentoCliente['formaPagamento'] } : null)}
+              >
+                <option value="">Selecione...</option>
+                <option value="PIX">PIX</option>
+                <option value="Cartao">Cartão</option>
+                <option value="Boleto">Boleto</option>
+                <option value="Transferencia">Transferência</option>
+              </Select>
+            </div>
 
-          <TextArea
-            label="Observações"
-            value={editingPagamento?.observacoes || ''}
-            onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, observacoes: e.target.value } : null)}
-            rows={3}
-          />
+            <div className="md:col-span-2">
+              <TextArea
+                label="Observações"
+                value={editingPagamento?.observacoes || ''}
+                onChange={(e) => setEditingPagamento(prev => prev ? { ...prev, observacoes: e.target.value } : null)}
+                rows={3}
+              />
+            </div>
+          </div>
 
-          <div className="flex justify-end gap-2 pt-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-2 pt-3 sm:pt-4">
             <Button
               type="button"
               variant="ghost"
@@ -853,88 +867,98 @@ export function Financeiro() {
         title={editingRepasse?.id ? 'Editar Repasse' : 'Novo Repasse'}
         size="lg"
       >
-        <form onSubmit={handleSubmitRepasse} className="space-y-4">
-          <Select
-            label="Ordem de Serviço"
-            value={editingRepasse?.ordemServicoId || ''}
-            onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, ordemServicoId: Number(e.target.value) } : null)}
-            required
-          >
-            <option value="">Selecione...</option>
-            {ordensServico?.map(os => (
-              <option key={os.id} value={os.id}>
-                OS #{os.id} - {clientes?.find(c => c.id === os.clienteId)?.nome}
-              </option>
-            ))}
-          </Select>
+        <form onSubmit={handleSubmitRepasse} className="space-y-3 sm:space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <div className="md:col-span-2">
+              <Select
+                label="Ordem de Serviço"
+                value={editingRepasse?.ordemServicoId || ''}
+                onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, ordemServicoId: Number(e.target.value) } : null)}
+                required
+              >
+                <option value="">Selecione...</option>
+                {ordensServico?.map(os => (
+                  <option key={os.id} value={os.id}>
+                    OS #{os.id} - {clientes?.find(c => c.id === os.clienteId)?.nome}
+                  </option>
+                ))}
+              </Select>
+            </div>
 
-          <Select
-            label="Fornecedor"
-            value={editingRepasse?.fornecedorId || ''}
-            onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, fornecedorId: Number(e.target.value) } : null)}
-            required
-          >
-            <option value="">Selecione...</option>
-            {fornecedores?.map(f => (
-              <option key={f.id} value={f.id}>{f.nome}</option>
-            ))}
-          </Select>
+            <div className="md:col-span-2">
+              <Select
+                label="Fornecedor"
+                value={editingRepasse?.fornecedorId || ''}
+                onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, fornecedorId: Number(e.target.value) } : null)}
+                required
+              >
+                <option value="">Selecione...</option>
+                {fornecedores?.map(f => (
+                  <option key={f.id} value={f.id}>{f.nome}</option>
+                ))}
+              </Select>
+            </div>
 
-          <Input
-            type="number"
-            label="Valor"
-            value={editingRepasse?.valor || ''}
-            onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, valor: Number(e.target.value) } : null)}
-            step="0.01"
-            required
-          />
+            <Input
+              type="number"
+              label="Valor"
+              value={editingRepasse?.valor || ''}
+              onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, valor: Number(e.target.value) } : null)}
+              step="0.01"
+              required
+            />
 
-          <Input
-            type="date"
-            label="Data de Vencimento"
-            value={editingRepasse?.dataVencimento ? new Date(editingRepasse.dataVencimento).toISOString().split('T')[0] : ''}
-            onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, dataVencimento: new Date(e.target.value) } : null)}
-            required
-          />
+            <Select
+              label="Status"
+              value={editingRepasse?.status || 'AFaturar'}
+              onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, status: e.target.value as RepasseFornecedor['status'] } : null)}
+              required
+            >
+              <option value="AFaturar">A Faturar</option>
+              <option value="Faturado">Faturado</option>
+              <option value="Pago">Pago</option>
+            </Select>
 
-          <Input
-            type="date"
-            label="Data de Pagamento"
-            value={editingRepasse?.dataPagamento ? new Date(editingRepasse.dataPagamento).toISOString().split('T')[0] : ''}
-            onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, dataPagamento: e.target.value ? new Date(e.target.value) : null } : null)}
-          />
+            <Input
+              type="date"
+              label="Data de Vencimento"
+              value={editingRepasse?.dataVencimento ? new Date(editingRepasse.dataVencimento).toISOString().split('T')[0] : ''}
+              onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, dataVencimento: new Date(e.target.value) } : null)}
+              required
+            />
 
-          <Select
-            label="Status"
-            value={editingRepasse?.status || 'AFaturar'}
-            onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, status: e.target.value as RepasseFornecedor['status'] } : null)}
-            required
-          >
-            <option value="AFaturar">A Faturar</option>
-            <option value="Faturado">Faturado</option>
-            <option value="Pago">Pago</option>
-          </Select>
+            <Input
+              type="date"
+              label="Data de Pagamento"
+              value={editingRepasse?.dataPagamento ? new Date(editingRepasse.dataPagamento).toISOString().split('T')[0] : ''}
+              onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, dataPagamento: e.target.value ? new Date(e.target.value) : null } : null)}
+            />
 
-          <Select
-            label="Forma de Pagamento"
-            value={editingRepasse?.formaPagamento || ''}
-            onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, formaPagamento: e.target.value as RepasseFornecedor['formaPagamento'] } : null)}
-          >
-            <option value="">Selecione...</option>
-            <option value="PIX">PIX</option>
-            <option value="Cartao">Cartão</option>
-            <option value="Boleto">Boleto</option>
-            <option value="Transferencia">Transferência</option>
-          </Select>
+            <div className="md:col-span-2">
+              <Select
+                label="Forma de Pagamento"
+                value={editingRepasse?.formaPagamento || ''}
+                onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, formaPagamento: e.target.value as RepasseFornecedor['formaPagamento'] } : null)}
+              >
+                <option value="">Selecione...</option>
+                <option value="PIX">PIX</option>
+                <option value="Cartao">Cartão</option>
+                <option value="Boleto">Boleto</option>
+                <option value="Transferencia">Transferência</option>
+              </Select>
+            </div>
 
-          <TextArea
-            label="Observações"
-            value={editingRepasse?.observacoes || ''}
+            <div className="md:col-span-2">
+              <TextArea
+                label="Observações"
+                value={editingRepasse?.observacoes || ''}
             onChange={(e) => setEditingRepasse(prev => prev ? { ...prev, observacoes: e.target.value } : null)}
             rows={3}
           />
+            </div>
+          </div>
 
-          <div className="flex justify-end gap-2 pt-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-2 pt-3 sm:pt-4">
             <Button
               type="button"
               variant="ghost"

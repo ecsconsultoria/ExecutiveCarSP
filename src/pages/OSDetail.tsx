@@ -297,24 +297,24 @@ export function OSDetail() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex items-center gap-4">
+    <div className="p-4 sm:p-6">
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
         <Link to="/os">
-          <Button variant="ghost">
-            <ArrowLeft className="h-5 w-5 mr-2" />
+          <Button variant="ghost" className="w-full sm:w-auto">
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
             Voltar
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold text-black-900">
+        <h1 className="text-2xl sm:text-3xl font-bold text-black-900">
           Ordem de Serviço #{os.id}
         </h1>
-        <div className="ml-auto">
+        <div className="sm:ml-auto">
           <StatusBadge status={os.status} />
         </div>
       </div>
 
       {/* PDF Generation Buttons */}
-      <div className="mb-6 flex gap-3">
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row gap-2 sm:gap-3">
         <Button onClick={handleGenerateConfirmation} size="sm">
           <FileDown className="h-4 w-4 mr-2" />
           Gerar Confirmação
@@ -327,9 +327,9 @@ export function OSDetail() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
         <Card title="Informações do Cliente">
-          <div className="space-y-2">
+          <div className="space-y-2 text-sm sm:text-base">
             <div>
               <span className="font-medium">Nome:</span> {cliente?.nome || 'Carregando...'}
             </div>
@@ -347,7 +347,7 @@ export function OSDetail() {
         </Card>
 
         <Card title="Detalhes do Serviço">
-          <div className="space-y-2">
+          <div className="space-y-2 text-sm sm:text-base">
             <div>
               <span className="font-medium">Tipo:</span>{' '}
               {os.tipoServico === 'transfer' ? 'Transfer' : `${os.pacoteHoras} horas`}
@@ -372,7 +372,7 @@ export function OSDetail() {
         </Card>
 
         <Card title="Agendamento">
-          <div className="space-y-2">
+          <div className="space-y-2 text-sm sm:text-base">
             <div>
               <span className="font-medium">Data/Hora Início:</span>{' '}
               {new Date(os.agendamento.dataHoraInicio).toLocaleString('pt-BR')}

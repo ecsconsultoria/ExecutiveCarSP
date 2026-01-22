@@ -274,46 +274,46 @@ export function Despesas() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-black-900">Despesas</h1>
-        <Button onClick={handleAddDespesa}>
-          <Plus className="h-5 w-5 mr-2" />
+    <div className="p-4 sm:p-6">
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-black-900">Despesas</h1>
+        <Button onClick={handleAddDespesa} className="w-full sm:w-auto">
+          <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
           Nova Despesa
         </Button>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6">
         <Card>
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Total Despesas</p>
-              <p className="text-2xl font-bold text-black-900">{formatCurrency(totalDespesas)}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs sm:text-sm text-gray-600">Total Despesas</p>
+              <p className="text-lg sm:text-2xl font-bold text-black-900 truncate">{formatCurrency(totalDespesas)}</p>
             </div>
-            <div className="bg-gold-100 p-3 rounded-full">
-              <FileText className="h-6 w-6 text-gold-600" />
+            <div className="bg-gold-100 p-2 sm:p-3 rounded-full flex-shrink-0">
+              <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-gold-600" />
             </div>
           </div>
         </Card>
 
         <Card>
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Quantidade</p>
-              <p className="text-2xl font-bold text-black-900">{filteredDespesas.length}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs sm:text-sm text-gray-600">Quantidade</p>
+              <p className="text-lg sm:text-2xl font-bold text-black-900">{filteredDespesas.length}</p>
             </div>
-            <div className="bg-blue-100 p-3 rounded-full">
-              <Filter className="h-6 w-6 text-blue-600" />
+            <div className="bg-blue-100 p-2 sm:p-3 rounded-full flex-shrink-0">
+              <Filter className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
             </div>
           </div>
         </Card>
 
         <Card>
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Média por Despesa</p>
-              <p className="text-2xl font-bold text-black-900">
+            <div className="min-w-0 flex-1">
+              <p className="text-xs sm:text-sm text-gray-600">Média por Despesa</p>
+              <p className="text-lg sm:text-2xl font-bold text-black-900 truncate">
                 {filteredDespesas.length > 0
                   ? formatCurrency(totalDespesas / filteredDespesas.length)
                   : 'R$ 0,00'}

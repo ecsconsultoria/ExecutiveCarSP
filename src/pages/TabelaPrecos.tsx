@@ -73,17 +73,17 @@ export function TabelaPrecos() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-black-900">Tabela de Preços</h1>
-        <Button onClick={handleAdd}>
-          <Plus className="h-5 w-5 mr-2" />
+    <div className="p-4 sm:p-6">
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-black-900">Tabela de Preços</h1>
+        <Button onClick={handleAdd} className="w-full sm:w-auto">
+          <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
           Novo Preço
         </Button>
       </div>
 
       <Card>
-        <div className="mb-4 flex gap-4">
+        <div className="mb-3 sm:mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <Select
             label="Filtrar por Tipo de Serviço"
             options={[
@@ -200,7 +200,7 @@ export function TabelaPrecos() {
         size="lg"
       >
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             <Select
               label="Tipo de Serviço"
               options={[
@@ -278,7 +278,7 @@ export function TabelaPrecos() {
               required
             />
 
-            <div className="col-span-2">
+            <div className="md:col-span-2">
               <Checkbox
                 label="Veículo Blindado"
                 checked={editingPreco?.blindado || false}
@@ -310,10 +310,10 @@ export function TabelaPrecos() {
               }
             />
 
-            <div className="col-span-2">
-              <h3 className="text-lg font-medium mb-2">Ajustes</h3>
+            <div className="md:col-span-2">
+              <h3 className="text-base sm:text-lg font-medium mb-2">Ajustes</h3>
               {editingPreco?.ajustes.map((ajuste, index) => (
-                <div key={index} className="grid grid-cols-4 gap-2 mb-2">
+                <div key={index} className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">
                   <Select
                     options={[
                       { value: 'percentual', label: 'Percentual' },
@@ -380,7 +380,7 @@ export function TabelaPrecos() {
             </div>
           </div>
 
-          <div className="mt-6 flex justify-end gap-2">
+          <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-end gap-2">
             <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)}>
               Cancelar
             </Button>
