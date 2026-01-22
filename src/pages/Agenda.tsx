@@ -137,9 +137,11 @@ export function Agenda() {
               Abrir Formulário
             </Button>
           )}
-          <div className="flex rounded-md shadow-sm">
+          <div className="flex rounded-md shadow-sm" role="group" aria-label="View mode">
             <button
               onClick={() => setViewMode('list')}
+              role="button"
+              aria-pressed={viewMode === 'list'}
               className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-l-md border ${
                 viewMode === 'list'
                   ? 'bg-gold-500 text-white border-gold-500'
@@ -150,6 +152,8 @@ export function Agenda() {
             </button>
             <button
               onClick={() => setViewMode('calendar')}
+              role="button"
+              aria-pressed={viewMode === 'calendar'}
               className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-r-md border-t border-r border-b ${
                 viewMode === 'calendar'
                   ? 'bg-gold-500 text-white border-gold-500'

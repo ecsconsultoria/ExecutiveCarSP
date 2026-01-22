@@ -339,9 +339,11 @@ export function Financeiro() {
 
       {/* Tabs */}
       <div className="mb-4 sm:mb-6 border-b border-gray-200">
-        <nav className="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto">
+        <nav className="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto" role="tablist">
           <button
             onClick={() => setActiveTab('dashboard')}
+            role="tab"
+            aria-selected={activeTab === 'dashboard'}
             className={`py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
               activeTab === 'dashboard'
                 ? 'border-gold-500 text-gold-600'
@@ -352,6 +354,8 @@ export function Financeiro() {
           </button>
           <button
             onClick={() => setActiveTab('recebimentos')}
+            role="tab"
+            aria-selected={activeTab === 'recebimentos'}
             className={`py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
               activeTab === 'recebimentos'
                 ? 'border-gold-500 text-gold-600'
@@ -362,6 +366,8 @@ export function Financeiro() {
           </button>
           <button
             onClick={() => setActiveTab('repasses')}
+            role="tab"
+            aria-selected={activeTab === 'repasses'}
             className={`py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
               activeTab === 'repasses'
                 ? 'border-gold-500 text-gold-600'
