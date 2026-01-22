@@ -84,6 +84,12 @@ export function Financeiro() {
     return new Date(vencimento) < new Date();
   };
 
+  // Format date helper
+  const formatDate = (date: Date | null) => {
+    if (!date) return '-';
+    return formatDateUtil(date);
+  };
+
   // Filter functions
   const filteredPagamentos = useMemo(() => {
     if (!pagamentos) return [];
@@ -634,12 +640,6 @@ export function Financeiro() {
         {c.label}
       </span>
     );
-  };
-
-  // Format date helper
-  const formatDate = (date: Date | null) => {
-    if (!date) return '-';
-    return formatDateUtil(date);
   };
 
   return (
