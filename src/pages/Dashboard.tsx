@@ -1,104 +1,31 @@
-import { Link } from 'react-router-dom';
-import { Card } from '../components/ui/Card';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db';
-import { Users, Truck, FileText, Calendar } from 'lucide-react';
+import React from 'react';
+import './Dashboard.css'; // Assuming you have some CSS for styling
 
-export function Dashboard() {
-  const clientes = useLiveQuery(() => db.clientes.count());
-  const fornecedores = useLiveQuery(() => db.fornecedores.count());
-  const ordensServico = useLiveQuery(() => db.ordens_servico.count());
-  const ordensAtivas = useLiveQuery(() =>
-    db.ordens_servico.where('status').anyOf(['Reservado', 'EmAndamento']).count()
-  );
-
-  const stats = [
-    { name: 'Clientes', value: clientes || 0, icon: Users, color: 'text-blue-600', link: '/clientes' },
-    { name: 'Fornecedores', value: fornecedores || 0, icon: Truck, color: 'text-green-600', link: '/fornecedores' },
-    { name: 'Ordens de Serviço', value: ordensServico || 0, icon: FileText, color: 'text-gold-600', link: '/os' },
-    { name: 'Ordens Ativas', value: ordensAtivas || 0, icon: Calendar, color: 'text-purple-600', link: '/agenda' },
-  ];
-
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-black-900 mb-8">Dashboard</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat) => (
-          <Link key={stat.name} to={stat.link}>
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                  <p className="text-3xl font-bold text-black-900 mt-2">{stat.value}</p>
+const Dashboard = () => {
+    return (
+        <div className="p-3 sm:p-4">
+            <h1 className="text-2xl sm:text-3xl">Dashboard</h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                <div className="flex flex-col items-center bg-white shadow-md rounded-lg">
+                    <h2 className="text-lg font-medium">Stat 1</h2>
+                    <p className="text-xl">Value</p>
                 </div>
-                <stat.icon className={`h-12 w-12 ${stat.color}`} />
-              </div>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card title="Ações Rápidas">
-          <div className="space-y-3">
-            <Link
-              to="/os/novo"
-              className="block p-4 bg-gold-50 hover:bg-gold-100 rounded-lg transition-colors"
-            >
-              <div className="flex items-center">
-                <FileText className="h-6 w-6 text-gold-600 mr-3" />
-                <div>
-                  <p className="font-medium text-black-900">Nova Ordem de Serviço</p>
-                  <p className="text-sm text-gray-600">Criar nova OS</p>
+                <div className="flex flex-col items-center bg-white shadow-md rounded-lg">
+                    <h2 className="text-lg font-medium">Stat 2</h2>
+                    <p className="text-xl">Value</p>
                 </div>
-              </div>
-            </Link>
-            <Link
-              to="/clientes"
-              className="block p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
-            >
-              <div className="flex items-center">
-                <Users className="h-6 w-6 text-blue-600 mr-3" />
-                <div>
-                  <p className="font-medium text-black-900">Gerenciar Clientes</p>
-                  <p className="text-sm text-gray-600">Ver e editar clientes</p>
+                <div className="flex flex-col items-center bg-white shadow-md rounded-lg">
+                    <h2 className="text-lg font-medium">Stat 3</h2>
+                    <p className="text-xl">Value</p>
                 </div>
-              </div>
-            </Link>
-            <Link
-              to="/agenda"
-              className="block p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
-            >
-              <div className="flex items-center">
-                <Calendar className="h-6 w-6 text-purple-600 mr-3" />
-                <div>
-                  <p className="font-medium text-black-900">Ver Agenda</p>
-                  <p className="text-sm text-gray-600">Calendário de serviços</p>
+                <div className="flex flex-col items-center bg-white shadow-md rounded-lg">
+                    <h2 className="text-lg font-medium">Stat 4</h2>
+                    <p className="text-xl">Value</p>
                 </div>
-              </div>
-            </Link>
-          </div>
-        </Card>
-
-        <Card title="Bem-vindo ao ExecutiveCarSP">
-          <div className="space-y-4">
-            <p className="text-gray-700">
-              Sistema de gerenciamento para transporte executivo. Gerencie clientes, fornecedores,
-              ordens de serviço e muito mais.
-            </p>
-            <div className="border-t pt-4">
-              <h3 className="font-semibold text-black-900 mb-2">Primeiros Passos:</h3>
-              <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700">
-                <li>Configure as definições em Configurações</li>
-                <li>Cadastre seus clientes e fornecedores</li>
-                <li>Defina a tabela de preços</li>
-                <li>Comece a criar ordens de serviço</li>
-              </ol>
+                {/* Add more stats cards as needed */}
             </div>
-          </div>
-        </Card>
-      </div>
-    </div>
-  );
-}
+        </div>
+    );
+};
+
+export default Dashboard;
