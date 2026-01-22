@@ -10,6 +10,13 @@ export interface Settings {
   hourPackages: number[];
   theme: string;
   formUrl: string;
+  // Phase 3: PDF configurations
+  pdfLogo?: string; // Base64 encoded logo
+  pdfLanguage?: 'pt-BR' | 'en' | 'es';
+  pdfNextSequentialNumber?: number; // Next PDF number
+  // Phase 3: Integration settings
+  googleSheetsEnabled?: boolean;
+  webhookUrl?: string;
 }
 
 export interface CancelPolicyWindow {
@@ -164,6 +171,14 @@ export interface PagamentoCliente {
   status: 'AReceber' | 'Pago' | 'Vencido' | 'Cancelado';
   formaPagamento: 'PIX' | 'Cartao' | 'Boleto' | 'Transferencia' | null;
   observacoes: string;
+  // Phase 3: Installments support
+  parcelas?: Parcela[];
+  // Phase 3: Cost center and attachments
+  centroCusto?: string;
+  anexoIds?: number[]; // Attachment IDs
+  // Phase 3: Reconciliation
+  conciliado?: boolean;
+  dataConciliacao?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -178,6 +193,12 @@ export interface RepasseFornecedor {
   status: 'AFaturar' | 'Faturado' | 'Pago';
   formaPagamento: 'PIX' | 'Cartao' | 'Boleto' | 'Transferencia' | null;
   observacoes: string;
+  // Phase 3: Cost center and attachments
+  centroCusto?: string;
+  anexoIds?: number[]; // Attachment IDs
+  // Phase 3: Reconciliation
+  conciliado?: boolean;
+  dataConciliacao?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -186,6 +207,9 @@ export interface Anexo {
   id?: number;
   ordemServicoId: number | null;
   despesaId?: number | null;
+  // Phase 3: Support for payments and transfers
+  pagamentoClienteId?: number | null;
+  repasseFornecedorId?: number | null;
   nome: string;
   tipo: string;
   tamanho: number;
@@ -212,4 +236,72 @@ export interface PreOrdem {
   status: 'pendente' | 'convertido' | 'rejeitado';
   createdAt: Date;
   convertedOSId?: number | null;
+}
+
+// Phase 3: Payment installments
+export interface Parcela {
+  numero: number;
+  valor: number;
+  dataVencimento: Date;
+  dataPagamento: Date | null;
+  status: 'Pendente' | 'Pago' | 'Vencido';
+  juros?: number; // Interest amount
+  desconto?: number; // Discount amount
+}
+
+// Phase 3: Import presets
+export interface ImportPreset {
+  id?: number;
+  nome: string;
+  descricao?: string;
+  mapeamento: ImportMapping;
+  validacoes: ImportValidation[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ImportMapping {
+  clienteNome: string;
+  clienteTelefone?: string;
+  clienteEmail?: string;
+  tipoServico: string;
+  pacoteHoras?: string;
+  veiculoTipo: string;
+  blindado?: string;
+  motoristaTipo: string;
+  origem: string;
+  destino: string;
+  dataHoraInicio: string;
+  dataHoraFim?: string;
+  observacoes?: string;
+}
+
+export interface ImportValidation {
+  campo: string;
+  obrigatorio: boolean;
+  tipo: 'texto' | 'numero' | 'data' | 'booleano';
+  formatoEsperado?: string;
+}
+
+// Phase 3: Saved filters
+export interface SavedFilter {
+  id?: number;
+  nome: string;
+  tipo: 'os' | 'financeiro' | 'relatorio';
+  filtros: Record<string, any>;
+  createdAt: Date;
+  userId?: string; // For future multi-user support
+}
+
+// Phase 3: PDF Configuration
+export interface PDFTemplate {
+  id?: number;
+  nome: string;
+  tipo: 'confirmacao' | 'recibo' | 'extrato';
+  cabecalho?: string;
+  rodape?: string;
+  idioma: 'pt-BR' | 'en' | 'es';
+  campos: string[]; // Fields to include
+  createdAt: Date;
+  updatedAt: Date;
 }
