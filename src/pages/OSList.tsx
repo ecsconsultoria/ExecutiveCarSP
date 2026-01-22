@@ -36,27 +36,27 @@ export function OSList() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-black-900">Ordens de Serviço</h1>
+    <div className="p-4 sm:p-6">
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-black-900">Ordens de Serviço</h1>
         <Link to="/os/new">
-          <Button>
-            <Plus className="h-5 w-5 mr-2" />
+          <Button className="w-full sm:w-auto">
+            <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
             Nova OS
           </Button>
         </Link>
       </div>
 
       <Card>
-        <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mb-3 sm:mb-4 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
             <input
               type="text"
               placeholder="Buscar por ID ou cliente..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gold-500 focus:border-gold-500"
+              className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-gold-500 focus:border-gold-500"
             />
           </div>
           <Select
