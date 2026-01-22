@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
-import type { CancelPolicyWindow, VehicleType } from '../db/models';
+import type { CancelPolicyWindow, VehicleType, PreOrdem } from '../db/models';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input, Checkbox } from '../components/forms/Input';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, Upload, Download, FileText, Info } from 'lucide-react';
+import { useToast } from '../components/ui/Toast';
+import { downloadTemplateCSV, parseCSV, parseJSON } from '../utils/importer';
+import { Link } from 'react-router-dom';
 
 export function Configuracoes() {
   const settings = useLiveQuery(() => db.settings.get(1));
@@ -18,6 +21,9 @@ export function Configuracoes() {
   const [newVehicleName, setNewVehicleName] = useState('');
   const [newVehicleBlindado, setNewVehicleBlindado] = useState(false);
   const [newHourPackage, setNewHourPackage] = useState('');
+  const [parsedPreOrdens, setParsedPreOrdens] = useState<PreOrdem[]>([]);
+  const [importing, setImporting] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (settings) {
@@ -77,6 +83,54 @@ export function Configuracoes() {
 
   const removeCancelPolicyWindow = (index: number) => {
     setCancelPolicy(cancelPolicy.filter((_, i) => i !== index));
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setParsedPreOrdens([]);
+
+    try {
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      let result;
+
+      if (fileExtension === 'csv') {
+        result = await parseCSV(file);
+      } else if (fileExtension === 'json') {
+        result = await parseJSON(file);
+      } else {
+        showToast('error', 'Formato de arquivo não suportado. Use CSV ou JSON.');
+        return;
+      }
+
+      if (result.success && result.data) {
+        setParsedPreOrdens(result.data);
+        showToast('success', `${result.data.length} registros prontos para importação`);
+      } else {
+        showToast('error', `Erro ao processar arquivo: ${result.errors?.join(', ')}`);
+      }
+    } catch (error) {
+      showToast('error', 'Erro ao processar arquivo');
+    }
+  };
+
+  const handleImport = async () => {
+    if (parsedPreOrdens.length === 0) {
+      showToast('warning', 'Nenhum registro para importar');
+      return;
+    }
+
+    setImporting(true);
+    try {
+      await db.pre_ordens.bulkAdd(parsedPreOrdens);
+      showToast('success', `${parsedPreOrdens.length} pré-ordens importadas com sucesso!`);
+      setParsedPreOrdens([]);
+    } catch (error) {
+      showToast('error', 'Erro ao importar registros');
+    } finally {
+      setImporting(false);
+    }
   };
 
   if (!settings) {
@@ -230,6 +284,89 @@ export function Configuracoes() {
                 <Plus className="h-4 w-4 mr-2" />
                 Adicionar
               </Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* Form Importer */}
+        <Card title="Importador de Formulários">
+          <div className="space-y-6">
+            {/* Template Download */}
+            <div>
+              <Button onClick={downloadTemplateCSV} variant="secondary">
+                <Download className="h-4 w-4 mr-2" />
+                Baixar Template CSV
+              </Button>
+            </div>
+
+            {/* File Upload */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Upload de Arquivo (CSV ou JSON)
+                </label>
+                <input
+                  type="file"
+                  accept=".csv,.json"
+                  onChange={handleFileSelect}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gold-50 file:text-gold-700 hover:file:bg-gold-100"
+                />
+              </div>
+
+              {/* Preview */}
+              {parsedPreOrdens.length > 0 && (
+                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-medium text-gray-900">
+                      Preview: {parsedPreOrdens.length} registro(s) encontrado(s)
+                    </h3>
+                    <Button onClick={handleImport} disabled={importing}>
+                      <Upload className="h-4 w-4 mr-2" />
+                      {importing ? 'Importando...' : 'Importar'}
+                    </Button>
+                  </div>
+                  <div className="max-h-60 overflow-y-auto space-y-2">
+                    {parsedPreOrdens.slice(0, 5).map((preOrdem, idx) => (
+                      <div key={idx} className="text-sm p-2 bg-white rounded border border-gray-200">
+                        <div className="font-medium">{preOrdem.clienteNome}</div>
+                        <div className="text-gray-600 text-xs">
+                          {preOrdem.origem} → {preOrdem.destino} | {preOrdem.tipoServico} | {preOrdem.veiculoTipo}
+                        </div>
+                      </div>
+                    ))}
+                    {parsedPreOrdens.length > 5 && (
+                      <div className="text-sm text-gray-500 text-center">
+                        ... e mais {parsedPreOrdens.length - 5} registro(s)
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Link to view imported Pre-OS */}
+            <div className="pt-4 border-t border-gray-200">
+              <Link
+                to="/pre-ordens"
+                className="inline-flex items-center text-gold-600 hover:text-gold-700 font-medium"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Ver Pré-Ordens Importadas
+              </Link>
+            </div>
+
+            {/* Google Sheets OAuth Stub */}
+            <div className="pt-4 border-t border-gray-200">
+              <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h4 className="font-medium text-blue-900 mb-1">Google Sheets OAuth (Em Breve)</h4>
+                  <p className="text-sm text-blue-700">
+                    Conecte sua conta Google para importar formulários diretamente do Google Sheets.
+                    Esta funcionalidade estará disponível em breve.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </Card>
