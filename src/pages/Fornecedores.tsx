@@ -12,7 +12,6 @@ import type { Fornecedor } from '../db/models';
 
 export function Fornecedores() {
   const fornecedores = useLiveQuery(() => db.fornecedores.toArray()) || [];
-  const settings = useLiveQuery(() => db.settings.toCollection().first());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFornecedor, setEditingFornecedor] = useState<Fornecedor | null>(null);
 

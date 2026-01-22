@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { Card } from '../components/common/Card';
@@ -7,7 +6,6 @@ import { StatusBadge } from '../components/common/StatusBadge';
 import { Plus, Eye } from 'lucide-react';
 import { formatDateTime } from '../utils/date';
 import { formatCurrency } from '../utils/currency';
-import { Link } from 'react-router-dom';
 
 export function OrdensServico() {
   const ordensServico = useLiveQuery(() => 

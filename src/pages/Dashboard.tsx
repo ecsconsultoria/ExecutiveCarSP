@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { Card } from '../components/common/Card';
-import { FileText, Users, Truck, DollarSign, TrendingUp } from 'lucide-react';
+import { FileText, Users, Truck, TrendingUp } from 'lucide-react';
 
 export function Dashboard() {
   const clientes = useLiveQuery(() => db.clientes.count());

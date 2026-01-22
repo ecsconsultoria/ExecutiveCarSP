@@ -8,7 +8,7 @@ import { Input } from '../components/forms/Input';
 import { Select } from '../components/forms/Select';
 import { TextArea } from '../components/forms/TextArea';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
-import type { Cliente, Contato } from '../db/models';
+import type { Cliente } from '../db/models';
 
 export function Clientes() {
   const clientes = useLiveQuery(() => db.clientes.toArray()) || [];

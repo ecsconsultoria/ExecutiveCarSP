@@ -1,4 +1,4 @@
-import type { TabelaPreco, Ajuste } from '../db/models';
+import type { TabelaPreco } from '../db/models';
 
 export interface PricingParams {
   tipoServico: 'transfer' | 'hora';

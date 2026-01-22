@@ -1,4 +1,3 @@
-import React from 'react';
 import type { StatusOS } from '../../db/models';
 
 interface StatusBadgeProps {

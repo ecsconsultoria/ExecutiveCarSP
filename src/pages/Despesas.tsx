@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card } from '../components/common/Card';
 import { Receipt } from 'lucide-react';
 
