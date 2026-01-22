@@ -25,10 +25,11 @@ export function Input({ label, error, className = '', ...props }: InputProps) {
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
-  options: { value: string | number; label: string }[];
+  options?: { value: string | number; label: string }[];
+  children?: React.ReactNode;
 }
 
-export function Select({ label, error, options, className = '', ...props }: SelectProps) {
+export function Select({ label, error, options, className = '', children, ...props }: SelectProps) {
   return (
     <div className="mb-4">
       {label && (
@@ -40,11 +41,11 @@ export function Select({ label, error, options, className = '', ...props }: Sele
         className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-gold-500 focus:border-gold-500 ${className}`}
         {...props}
       >
-        {options.map((option) => (
+        {options ? options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
-        ))}
+        )) : children}
       </select>
       {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>

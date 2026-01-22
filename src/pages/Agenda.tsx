@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Calendar as CalendarIcon, ExternalLink, AlertTriangle } from 'lucide-react';
+import { Calendar as CalendarIcon, ExternalLink, AlertTriangle, Clock, Car, User } from 'lucide-react';
 import { db } from '../db';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { StatusBadge } from '../components/ui/StatusBadge';
-import type { Compromisso } from '../db/models';
+import type { Compromisso, OrdemServico } from '../db/models';
 
 export function Agenda() {
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('list');
@@ -13,6 +13,7 @@ export function Agenda() {
   const compromissos = useLiveQuery(() => db.compromissos.toArray(), []);
   const ordens = useLiveQuery(() => db.ordens_servico.toArray(), []);
   const clientes = useLiveQuery(() => db.clientes.toArray(), []);
+  const fornecedores = useLiveQuery(() => db.fornecedores.toArray(), []);
   const settings = useLiveQuery(() => db.settings.get(1));
 
   const upcomingCompromissos = compromissos
@@ -20,7 +21,37 @@ export function Agenda() {
     ?.sort((a, b) => a.dataHoraInicio.getTime() - b.dataHoraInicio.getTime())
     ?.slice(0, 20);
 
-  const checkConflicts = (compromisso: Compromisso) => {
+  const calculateDuration = (start: Date, end: Date): string => {
+    const diffMs = new Date(end).getTime() - new Date(start).getTime();
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (hours === 0) {
+      return `${minutes}min`;
+    } else if (minutes === 0) {
+      return `${hours}h`;
+    }
+    return `${hours}h ${minutes}min`;
+  };
+
+  interface ConflictInfo {
+    hasConflict: boolean;
+    vehicleConflict: boolean;
+    motoristaConflict: boolean;
+    conflictingOSNumbers: number[];
+  }
+
+  const checkConflicts = (compromisso: Compromisso): ConflictInfo => {
+    const result: ConflictInfo = {
+      hasConflict: false,
+      vehicleConflict: false,
+      motoristaConflict: false,
+      conflictingOSNumbers: [],
+    };
+
+    const currentOS = getOrdemServico(compromisso.ordemServicoId);
+    if (!currentOS) return result;
+
     const conflicts = compromissos?.filter((c) => {
       if (c.id === compromisso.id) return false;
       
@@ -29,14 +60,41 @@ export function Agenda() {
       const c2Start = new Date(c.dataHoraInicio).getTime();
       const c2End = new Date(c.dataHoraFim).getTime();
       
-      return (
+      const hasTimeOverlap = (
         (c1Start >= c2Start && c1Start < c2End) ||
         (c1End > c2Start && c1End <= c2End) ||
         (c1Start <= c2Start && c1End >= c2End)
       );
+
+      if (!hasTimeOverlap) return false;
+
+      const otherOS = getOrdemServico(c.ordemServicoId);
+      if (!otherOS) return false;
+
+      const sameVehicle = currentOS.veiculoTipo === otherOS.veiculoTipo && 
+                          currentOS.blindado === otherOS.blindado;
+      const sameMotorista = currentOS.motoristaTipo === otherOS.motoristaTipo &&
+                            currentOS.terceirizacao === otherOS.terceirizacao &&
+                            currentOS.fornecedorId === otherOS.fornecedorId;
+
+      if (sameVehicle) {
+        result.vehicleConflict = true;
+      }
+      if (sameMotorista) {
+        result.motoristaConflict = true;
+      }
+
+      return sameVehicle || sameMotorista;
     });
+
+    if (conflicts && conflicts.length > 0) {
+      result.hasConflict = true;
+      result.conflictingOSNumbers = conflicts
+        .map((c) => c.ordemServicoId)
+        .filter((id): id is number => id !== undefined);
+    }
     
-    return conflicts && conflicts.length > 0;
+    return result;
   };
 
   const getOrdemServico = (osId: number) => {
@@ -45,6 +103,21 @@ export function Agenda() {
 
   const getCliente = (clienteId: number) => {
     return clientes?.find((c) => c.id === clienteId);
+  };
+
+  const getFornecedor = (fornecedorId: number | null) => {
+    if (!fornecedorId) return null;
+    return fornecedores?.find((f) => f.id === fornecedorId);
+  };
+
+  const getVehicleName = (os: OrdemServico) => {
+    const vehicleType = settings?.vehiclesCatalog.find((v) => v.id === os.veiculoTipo);
+    const blindadoText = os.blindado ? ' (Blindado)' : '';
+    return vehicleType ? `${vehicleType.name}${blindadoText}` : 'N/A';
+  };
+
+  const getMotoristaType = (os: OrdemServico) => {
+    return os.motoristaTipo === 'bilingue' ? 'Bilíngue' : 'Monolíngue';
   };
 
   const openFormUrl = () => {
@@ -107,26 +180,34 @@ export function Agenda() {
             {upcomingCompromissos?.map((compromisso) => {
               const os = getOrdemServico(compromisso.ordemServicoId);
               const cliente = os ? getCliente(os.clienteId) : null;
-              const hasConflict = checkConflicts(compromisso);
+              const fornecedor = os ? getFornecedor(os.fornecedorId) : null;
+              const conflictInfo = checkConflicts(compromisso);
+              const duration = calculateDuration(compromisso.dataHoraInicio, compromisso.dataHoraFim);
 
               return (
                 <div
                   key={compromisso.id}
                   className={`border rounded-lg p-4 ${
-                    hasConflict ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    conflictInfo.hasConflict ? 'border-red-300 bg-red-50' : 'border-gray-200'
                   }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
                         <h3 className="text-lg font-semibold text-gray-900">
                           {compromisso.titulo}
                         </h3>
                         {os && <StatusBadge status={os.status} />}
-                        {hasConflict && (
-                          <div className="flex items-center text-red-600 text-sm">
+                        
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {duration}
+                        </span>
+
+                        {conflictInfo.hasConflict && (
+                          <div className="flex items-center text-red-600 text-sm font-medium">
                             <AlertTriangle className="h-4 w-4 mr-1" />
-                            Conflito
+                            Conflito de Recursos
                           </div>
                         )}
                       </div>
@@ -144,8 +225,44 @@ export function Agenda() {
                           <span className="font-medium">Fim:</span>{' '}
                           {new Date(compromisso.dataHoraFim).toLocaleString('pt-BR')}
                         </div>
+
+                        {os && (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              <Car className="h-3 w-3 mr-1" />
+                              {getVehicleName(os)}
+                            </span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                              <User className="h-3 w-3 mr-1" />
+                              Motorista {getMotoristaType(os)}
+                            </span>
+                            {fornecedor && (
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                Terceirizado: {fornecedor.nome}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {conflictInfo.hasConflict && (
+                          <div className="mt-2 p-2 bg-red-100 border border-red-200 rounded text-xs text-red-800">
+                            <div className="font-semibold mb-1">Conflito detectado:</div>
+                            <ul className="list-disc list-inside space-y-0.5">
+                              {conflictInfo.vehicleConflict && (
+                                <li>Mesmo veículo em uso</li>
+                              )}
+                              {conflictInfo.motoristaConflict && (
+                                <li>Mesmo motorista alocado</li>
+                              )}
+                            </ul>
+                            <div className="mt-1">
+                              <span className="font-semibold">OS em conflito:</span> #{conflictInfo.conflictingOSNumbers.join(', #')}
+                            </div>
+                          </div>
+                        )}
+
                         {compromisso.descricao && (
-                          <div>
+                          <div className="mt-2">
                             <span className="font-medium">Descrição:</span>{' '}
                             {compromisso.descricao}
                           </div>
@@ -177,17 +294,17 @@ export function Agenda() {
         </Card>
       )}
 
-      {upcomingCompromissos && upcomingCompromissos.some(checkConflicts) && (
+      {upcomingCompromissos && upcomingCompromissos.some((c) => checkConflicts(c).hasConflict) && (
         <Card className="mt-6 border-red-300 bg-red-50">
           <div className="flex items-start">
             <AlertTriangle className="h-5 w-5 text-red-600 mr-2 mt-0.5" />
             <div>
               <h3 className="font-semibold text-red-900 mb-1">
-                Atenção: Conflitos Detectados
+                Atenção: Conflitos de Recursos Detectados
               </h3>
               <p className="text-sm text-red-700">
-                Existem compromissos com horários sobrepostos. Verifique a agenda e
-                ajuste conforme necessário.
+                Existem compromissos com recursos conflitantes (veículo ou motorista alocados simultaneamente).
+                Verifique a agenda e ajuste os recursos ou horários conforme necessário.
               </p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, FileText, Users, Truck, DollarSign, Receipt, Settings, Database } from 'lucide-react';
+import { Home, Calendar, FileText, Users, Truck, DollarSign, Receipt, Settings, Database, BarChart3, ClipboardList } from 'lucide-react';
 
 // Pages
 import { Dashboard } from '../pages/Dashboard';
@@ -13,18 +13,22 @@ import { Fornecedores } from '../pages/Fornecedores';
 import { TabelaPrecos } from '../pages/TabelaPrecos';
 import { Financeiro } from '../pages/Financeiro';
 import { Despesas } from '../pages/Despesas';
+import { Relatorios } from '../pages/Relatorios';
 import { Configuracoes } from '../pages/Configuracoes';
 import { Backup } from '../pages/Backup';
+import { PreOrdens } from '../pages/PreOrdens';
 
 const navigation = [
   { name: 'Dashboard', to: '/', icon: Home },
   { name: 'Agenda', to: '/agenda', icon: Calendar },
   { name: 'Ordens de Serviço', to: '/os', icon: FileText },
+  { name: 'Pré-Ordens', to: '/pre-ordens', icon: ClipboardList },
   { name: 'Clientes', to: '/clientes', icon: Users },
   { name: 'Fornecedores', to: '/fornecedores', icon: Truck },
   { name: 'Tabela de Preços', to: '/precos', icon: DollarSign },
   { name: 'Despesas', to: '/despesas', icon: Receipt },
   { name: 'Financeiro', to: '/financeiro', icon: DollarSign },
+  { name: 'Relatórios', to: '/relatorios', icon: BarChart3 },
   { name: 'Configurações', to: '/configuracoes', icon: Settings },
   { name: 'Backup', to: '/backup', icon: Database },
 ];
@@ -96,11 +100,13 @@ export function AppRoutes() {
           <Route path="/os" element={<OSList />} />
           <Route path="/os/novo" element={<OSWizard />} />
           <Route path="/os/:id" element={<OSDetail />} />
+          <Route path="/pre-ordens" element={<PreOrdens />} />
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/fornecedores" element={<Fornecedores />} />
           <Route path="/precos" element={<TabelaPrecos />} />
           <Route path="/financeiro" element={<Financeiro />} />
           <Route path="/despesas" element={<Despesas />} />
+          <Route path="/relatorios" element={<Relatorios />} />
           <Route path="/configuracoes" element={<Configuracoes />} />
           <Route path="/backup" element={<Backup />} />
         </Routes>

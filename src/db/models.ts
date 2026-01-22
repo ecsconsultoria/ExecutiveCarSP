@@ -101,10 +101,19 @@ export interface OrdemServico {
   precoClienteTotal: number;
   precoFornecedor: number;
   impostosAplicados: number;
+  pricingBreakdown?: PricingBreakdown; // Phase 2: Detailed pricing calculation
   notas: string;
   anexos: number[]; // Anexo IDs
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface PricingBreakdown {
+  valorBase: number;
+  ajustes: Ajuste[];
+  subtotal: number;
+  imposto: number;
+  total: number;
 }
 
 export interface Trecho {
@@ -137,9 +146,11 @@ export interface Despesa {
   id?: number;
   ordemServicoId: number | null;
   descricao: string;
-  categoria: string;
+  categoria: 'combustivel' | 'pedagio' | 'alimentacao' | 'outros' | 'impostos';
   valor: number;
   data: Date;
+  notas?: string;
+  anexoId?: number; // Reference to uploaded receipt
   createdAt: Date;
   updatedAt: Date;
 }
@@ -148,8 +159,10 @@ export interface PagamentoCliente {
   id?: number;
   ordemServicoId: number;
   valor: number;
-  dataPagamento: Date;
-  formaPagamento: string;
+  dataVencimento: Date;
+  dataPagamento: Date | null;
+  status: 'AReceber' | 'Pago' | 'Vencido' | 'Cancelado';
+  formaPagamento: 'PIX' | 'Cartao' | 'Boleto' | 'Transferencia' | null;
   observacoes: string;
   createdAt: Date;
   updatedAt: Date;
@@ -160,8 +173,10 @@ export interface RepasseFornecedor {
   ordemServicoId: number;
   fornecedorId: number;
   valor: number;
-  dataRepasse: Date;
-  formaPagamento: string;
+  dataVencimento: Date;
+  dataPagamento: Date | null;
+  status: 'AFaturar' | 'Faturado' | 'Pago';
+  formaPagamento: 'PIX' | 'Cartao' | 'Boleto' | 'Transferencia' | null;
   observacoes: string;
   createdAt: Date;
   updatedAt: Date;
@@ -170,9 +185,31 @@ export interface RepasseFornecedor {
 export interface Anexo {
   id?: number;
   ordemServicoId: number | null;
+  despesaId?: number | null;
   nome: string;
   tipo: string;
   tamanho: number;
   url: string; // Base64 or blob URL
   createdAt: Date;
+}
+
+// Phase 2: Pre-OS for form importer
+export interface PreOrdem {
+  id?: number;
+  clienteNome: string;
+  clienteContatos?: Contato[];
+  tipoServico: 'transfer' | 'hora';
+  pacoteHoras: number | null;
+  veiculoTipo: string;
+  blindado: boolean;
+  motoristaTipo: 'bilingue' | 'mono';
+  origem: string;
+  destino: string;
+  dataHoraInicio: Date;
+  dataHoraFim?: Date | null;
+  observacoes: string;
+  importSource: 'csv' | 'json' | 'sheets';
+  status: 'pendente' | 'convertido' | 'rejeitado';
+  createdAt: Date;
+  convertedOSId?: number | null;
 }

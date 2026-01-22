@@ -95,6 +95,23 @@ export function OSWizard() {
       return;
     }
 
+    // Build pricing breakdown
+    const matchedPrice = !manualPrice ? findMatchingPrice(tabelaPrecos, {
+      tipoServico: formData.tipoServico!,
+      pacoteHoras: formData.pacoteHoras,
+      veiculoTipo: formData.veiculoTipo!,
+      blindado: formData.blindado!,
+      motoristaTipo: formData.motoristaTipo!,
+    }) : null;
+
+    const pricingBreakdown = {
+      valorBase: manualPrice ? precoManual : (matchedPrice?.valorClienteBase || 0),
+      ajustes: matchedPrice?.ajustes || [],
+      subtotal: pricing.basePrice,
+      imposto: pricing.tax,
+      total: pricing.total,
+    };
+
     const now = new Date();
     const os: Omit<OrdemServico, 'id'> = {
       clienteId: formData.clienteId!,
@@ -113,6 +130,7 @@ export function OSWizard() {
       precoClienteTotal: pricing.total,
       precoFornecedor: formData.precoFornecedor || 0,
       impostosAplicados: pricing.tax,
+      pricingBreakdown,
       notas: formData.notas || '',
       anexos: [],
       createdAt: now,
