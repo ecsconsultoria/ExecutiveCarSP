@@ -23,6 +23,10 @@ export function Configuracoes() {
   const [newHourPackage, setNewHourPackage] = useState('');
   const [parsedPreOrdens, setParsedPreOrdens] = useState<PreOrdem[]>([]);
   const [importing, setImporting] = useState(false);
+  const [pdfLogo, setPdfLogo] = useState('');
+  const [pdfLanguage, setPdfLanguage] = useState<'pt-BR' | 'en' | 'es'>('pt-BR');
+  const [googleSheetsEnabled, setGoogleSheetsEnabled] = useState(false);
+  const [webhookUrl, setWebhookUrl] = useState('');
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -32,6 +36,10 @@ export function Configuracoes() {
       setCancelPolicy(settings.cancelPolicy);
       setVehicles(settings.vehiclesCatalog);
       setHourPackages(settings.hourPackages);
+      setPdfLogo(settings.pdfLogo || '');
+      setPdfLanguage(settings.pdfLanguage || 'pt-BR');
+      setGoogleSheetsEnabled(settings.googleSheetsEnabled || false);
+      setWebhookUrl(settings.webhookUrl || '');
     }
   }, [settings]);
 
@@ -42,6 +50,10 @@ export function Configuracoes() {
       cancelPolicy,
       vehiclesCatalog: vehicles,
       hourPackages,
+      pdfLogo,
+      pdfLanguage,
+      googleSheetsEnabled,
+      webhookUrl,
     });
     alert('Configurações salvas com sucesso!');
   };
@@ -131,6 +143,28 @@ export function Configuracoes() {
     } finally {
       setImporting(false);
     }
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showToast('error', 'Por favor, selecione um arquivo de imagem');
+      return;
+    }
+
+    const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
+    if (file.size > maxSizeInBytes) {
+      showToast('error', 'Imagem muito grande. Tamanho máximo: 2MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPdfLogo(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   if (!settings) {
@@ -285,6 +319,62 @@ export function Configuracoes() {
                 Adicionar
               </Button>
             </div>
+          </div>
+        </Card>
+
+        {/* PDF Settings */}
+        <Card title="Configurações de PDF">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Idioma do PDF
+                </label>
+                <select
+                  value={pdfLanguage}
+                  onChange={(e) => setPdfLanguage(e.target.value as 'pt-BR' | 'en' | 'es')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500"
+                >
+                  <option value="pt-BR">Português (BR)</option>
+                  <option value="en">English</option>
+                  <option value="es">Español</option>
+                </select>
+              </div>
+              <Input
+                label="Número Sequencial Atual"
+                type="number"
+                value={settings.pdfNextSequentialNumber || 1}
+                disabled
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Logo para PDF
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gold-50 file:text-gold-700 hover:file:bg-gold-100"
+              />
+              {pdfLogo && (
+                <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                  <img src={pdfLogo} alt="Logo Preview" className="max-h-24 object-contain" />
+                </div>
+              )}
+            </div>
+            <Checkbox
+              label="Habilitar Integração com Google Sheets"
+              checked={googleSheetsEnabled}
+              onChange={(e) => setGoogleSheetsEnabled(e.target.checked)}
+            />
+            <Input
+              label="URL do Webhook"
+              type="url"
+              value={webhookUrl}
+              onChange={(e) => setWebhookUrl(e.target.value)}
+              placeholder="https://exemplo.com/webhook"
+            />
           </div>
         </Card>
 
