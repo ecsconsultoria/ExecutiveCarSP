@@ -11,6 +11,9 @@ import type {
   RepasseFornecedor,
   Anexo,
   PreOrdem,
+  ImportPreset,
+  SavedFilter,
+  PDFTemplate,
 } from './models';
 
 export class ExecutiveCarDB extends Dexie {
@@ -25,6 +28,10 @@ export class ExecutiveCarDB extends Dexie {
   repasses_fornecedor!: Table<RepasseFornecedor, number>;
   anexos!: Table<Anexo, number>;
   pre_ordens!: Table<PreOrdem, number>;
+  // Phase 3: New tables
+  import_presets!: Table<ImportPreset, number>;
+  saved_filters!: Table<SavedFilter, number>;
+  pdf_templates!: Table<PDFTemplate, number>;
 
   constructor() {
     super('ExecutiveCarDB');
@@ -57,6 +64,24 @@ export class ExecutiveCarDB extends Dexie {
       anexos: '++id, ordemServicoId, despesaId',
       pre_ordens: '++id, status, createdAt',
     });
+
+    // Version 3: Phase 3 enhancements
+    this.version(3).stores({
+      settings: '++id',
+      clientes: '++id, nome, documento',
+      fornecedores: '++id, nome, tipo',
+      tabela_precos: '++id, tipoServico, veiculoTipo, motoristaTipo',
+      ordens_servico: '++id, clienteId, fornecedorId, status, createdAt',
+      compromissos: '++id, ordemServicoId, dataHoraInicio',
+      despesas: '++id, ordemServicoId, data, categoria',
+      pagamentos_cliente: '++id, ordemServicoId, status, dataVencimento, dataPagamento, conciliado',
+      repasses_fornecedor: '++id, ordemServicoId, fornecedorId, status, dataVencimento, dataPagamento, conciliado',
+      anexos: '++id, ordemServicoId, despesaId, pagamentoClienteId, repasseFornecedorId',
+      pre_ordens: '++id, status, createdAt',
+      import_presets: '++id, nome, createdAt',
+      saved_filters: '++id, tipo, nome, createdAt',
+      pdf_templates: '++id, tipo, nome, createdAt',
+    });
   }
 }
 
@@ -87,6 +112,11 @@ export async function initializeDefaultSettings() {
       hourPackages: [3, 5, 8, 10, 12, 15],
       theme: 'gold',
       formUrl: '',
+      // Phase 3: PDF defaults
+      pdfLanguage: 'pt-BR',
+      pdfNextSequentialNumber: 1,
+      // Phase 3: Integration defaults
+      googleSheetsEnabled: false,
     });
   }
 }
