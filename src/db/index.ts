@@ -11,6 +11,13 @@ import type {
   RepasseFornecedor,
   Anexo,
   PreOrdem,
+  Operation,
+  OperationAssignment,
+  OperationEvent,
+  FinancialEntry,
+  OperationCost,
+  SupplierPayment,
+  RevenueEntry,
 } from './models';
 
 export class ExecutiveCarDB extends Dexie {
@@ -25,6 +32,13 @@ export class ExecutiveCarDB extends Dexie {
   repasses_fornecedor!: Table<RepasseFornecedor, number>;
   anexos!: Table<Anexo, number>;
   pre_ordens!: Table<PreOrdem, number>;
+  operations!: Table<Operation, number>;
+  operation_assignments!: Table<OperationAssignment, number>;
+  operation_events!: Table<OperationEvent, number>;
+  financial_entries!: Table<FinancialEntry, number>;
+  operation_costs!: Table<OperationCost, number>;
+  supplier_payments!: Table<SupplierPayment, number>;
+  revenue_entries!: Table<RevenueEntry, number>;
 
   constructor() {
     super('ExecutiveCarDB');
@@ -56,6 +70,28 @@ export class ExecutiveCarDB extends Dexie {
       repasses_fornecedor: '++id, ordemServicoId, fornecedorId, status, dataVencimento, dataPagamento',
       anexos: '++id, ordemServicoId, despesaId',
       pre_ordens: '++id, status, createdAt',
+    });
+
+    // Version 3: Phase 4 foundation (operational ERP structure)
+    this.version(3).stores({
+      settings: '++id',
+      clientes: '++id, nome, documento',
+      fornecedores: '++id, nome, tipo',
+      tabela_precos: '++id, tipoServico, veiculoTipo, motoristaTipo',
+      ordens_servico: '++id, clienteId, fornecedorId, status, createdAt',
+      compromissos: '++id, ordemServicoId, dataHoraInicio',
+      despesas: '++id, ordemServicoId, data, categoria',
+      pagamentos_cliente: '++id, ordemServicoId, status, dataVencimento, dataPagamento',
+      repasses_fornecedor: '++id, ordemServicoId, fornecedorId, status, dataVencimento, dataPagamento',
+      anexos: '++id, ordemServicoId, despesaId',
+      pre_ordens: '++id, status, createdAt',
+      operations: '++id, ordemServicoId, codigo, status, dataExecucao, createdAt',
+      operation_assignments: '++id, operationId, assignmentType, referenceId, status',
+      operation_events: '++id, operationId, eventType, eventAt',
+      financial_entries: '++id, operationId, entryKind, status, dueDate, paidAt',
+      operation_costs: '++id, operationId, categoria, data',
+      supplier_payments: '++id, operationId, fornecedorId, status, dueDate, paidAt',
+      revenue_entries: '++id, operationId, ordemServicoId, status, dueDate, receivedAt',
     });
   }
 }

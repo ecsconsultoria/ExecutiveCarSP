@@ -1,5 +1,10 @@
 Changelog
 
+2026-05-17 — Start implementation: V4 operational ERP foundation
+- Added base operational/financial V4 entities in IndexedDB schema: Operation, OperationAssignment, OperationEvent, FinancialEntry, OperationCost, SupplierPayment, RevenueEntry.
+- Added initial service layer modules (`src/services/*_service.ts`) to centralize business operations outside UI routes/pages.
+- Added Dexie schema version 3 with indexes for the new V4 entities, preserving existing structures for gradual migration.
+
 2026-01-22 — Phase 2: Finance, Despesas, PDFs, Reports, Form Importer
 - Financeiro: PagamentoCliente (AReceber, Pago, Vencido, Cancelado) e RepasseFornecedor (AFaturar, Faturado, Pago) com CRUD completo, datas e valores, vinculados à OS.
 - Despesas: CRUD completo com categorias (combustível, pedágio, alimentação, impostos, outros), anexo e vínculo com OS.

@@ -213,3 +213,94 @@ export interface PreOrdem {
   createdAt: Date;
   convertedOSId?: number | null;
 }
+
+// Phase 4 (start): ERP operacional com OS como entidade central
+export type OperationStatus =
+  | 'Aberta'
+  | 'Despacho'
+  | 'EmAndamento'
+  | 'Concluida'
+  | 'Cancelada';
+
+export interface Operation {
+  id?: number;
+  ordemServicoId: number | null;
+  codigo: string;
+  status: OperationStatus;
+  dataExecucao: Date;
+  observacoes: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type AssignmentType = 'motorista' | 'veiculo' | 'fornecedor';
+
+export interface OperationAssignment {
+  id?: number;
+  operationId: number;
+  assignmentType: AssignmentType;
+  referenceId: number;
+  status: 'Ativo' | 'Substituido' | 'Cancelado';
+  observacoes: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface OperationEvent {
+  id?: number;
+  operationId: number;
+  eventType: 'Criada' | 'Atribuicao' | 'Despacho' | 'CheckIn' | 'CheckOut' | 'Atualizacao' | 'Cancelamento';
+  descricao: string;
+  eventAt: Date;
+  createdAt: Date;
+}
+
+export type FinancialEntryKind = 'Receita' | 'Custo' | 'Repasse' | 'Ajuste';
+
+export interface FinancialEntry {
+  id?: number;
+  operationId: number | null;
+  entryKind: FinancialEntryKind;
+  description: string;
+  amount: number;
+  dueDate: Date | null;
+  paidAt: Date | null;
+  status: 'Pendente' | 'Liquidado' | 'Cancelado';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface OperationCost {
+  id?: number;
+  operationId: number;
+  categoria: 'combustivel' | 'pedagio' | 'alimentacao' | 'hospedagem' | 'outros';
+  valor: number;
+  descricao: string;
+  data: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface SupplierPayment {
+  id?: number;
+  operationId: number;
+  fornecedorId: number;
+  amount: number;
+  dueDate: Date;
+  paidAt: Date | null;
+  status: 'AFaturar' | 'Faturado' | 'Pago' | 'Cancelado';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface RevenueEntry {
+  id?: number;
+  operationId: number;
+  ordemServicoId: number | null;
+  amount: number;
+  dueDate: Date;
+  receivedAt: Date | null;
+  status: 'AReceber' | 'Recebido' | 'Vencido' | 'Cancelado';
+  createdAt: Date;
+  updatedAt: Date;
+}
